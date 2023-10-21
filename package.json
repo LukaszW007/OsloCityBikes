@@ -1,0 +1,25 @@
+{
+  "name": "oslocitybikes",
+  "version": "1.0.0",
+  "description": "App to visualize current and historical usage of city bikes in Oslo",
+  "main": "index.js",
+  "scripts": {
+    "test": "test-dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LukaszW007/OsloCityBikes.git"
+  },
+  "keywords": [
+    "mern"
+  ],
+  "author": "LukaszW",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LukaszW007/OsloCityBikes/issues"
+  },
+  "homepage": "https://github.com/LukaszW007/OsloCityBikes#readme",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
