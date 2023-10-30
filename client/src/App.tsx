@@ -7,14 +7,16 @@ import {Spinner} from "./Components/Spinner";
 export enum ValuesToParse {
     station_id = 'station_id',
     name = 'name',
-    // address = 'address',
-    // capacity = 'capacity',
+    address = 'address',
+    capacity = 'capacity',
     num_docks_available = 'num_docks_available',
     num_bikes_available = 'num_bikes_available',
 }
 
-const stationsListUrl = 'http://localhost:3001/api/station_information'
-const stationsStatusUrl = 'http://localhost:3001/api/station_status'
+const stationsListUrl = '/api/station_information'
+const stationsListLocalUrl = 'http://localhost:3001/api/station_information'
+const stationsStatusUrl = '/api/station_status'
+const stationsStatusLocalUrl = 'http://localhost:3001/api/station_status'
 
 function App() {
     const [isFetchedStationInfoData, setIsFetchedStationInfoData] = useState(false);
@@ -23,12 +25,12 @@ function App() {
     const [fetchedStationStatusData, setFetchedStationStatusData] = useState(null);
 
     const dataFetching = () => {
-        Xhr.getJson(stationsListUrl, null)
+        Xhr.getJson(stationsListLocalUrl, null)
             .then((data) => {
                 setFetchedStationInfoData(data.data);
                 setIsFetchedStationInfoData(true);
             })
-        Xhr.getJson(stationsStatusUrl, null)
+        Xhr.getJson(stationsStatusLocalUrl, null)
             .then((data) => {
                 setFetchedStationStatusData(data.data);
                 setIsFetchedStationStatusData(true);

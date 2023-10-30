@@ -19,8 +19,8 @@ export interface StationsListItem {
 //remember to update in the case of updating ValuesToDisplay
 export enum headers {
     name = 'Stativnavn',
-    // address = "Adresse",
-    // capacity = 'Kapasitet',
+    address = "Adresse",
+    capacity = 'Kapasitet',
     num_docks_available = 'Tilgjengelige låser',
     num_bikes_available = 'Ledige sykler',
 }
@@ -47,7 +47,7 @@ export function StationsList(props: StationsListProps) {
     const headersToDisplay = TableHeaders().map((singleHeader,index) => {
         return (
             <th key={index} scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  {singleHeader}
+								{singleHeader}
             </th>
         )
     })
