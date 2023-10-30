@@ -13,6 +13,9 @@ export enum ValuesToParse {
     num_bikes_available = 'num_bikes_available',
 }
 
+const stationsListUrl = 'http://localhost:3001/api/station_information'
+const stationsStatusUrl = 'http://localhost:3001/api/station_status'
+
 function App() {
     const [isFetchedStationInfoData, setIsFetchedStationInfoData] = useState(false);
     const [isFetchedStationStatusData, setIsFetchedStationStatusData] = useState(false);
@@ -20,14 +23,14 @@ function App() {
     const [fetchedStationStatusData, setFetchedStationStatusData] = useState(null);
 
     const dataFetching = () => {
-        Xhr.getJson('https://gbfs.urbansharing.com/oslobysykkel.no/station_information.json', null)
+        Xhr.getJson(stationsListUrl, null)
             .then((data) => {
-                setFetchedStationInfoData(data.data.data);
+                setFetchedStationInfoData(data.data);
                 setIsFetchedStationInfoData(true);
             })
-        Xhr.getJson('https://gbfs.urbansharing.com/oslobysykkel.no/station_status.json', null)
+        Xhr.getJson(stationsStatusUrl, null)
             .then((data) => {
-                setFetchedStationStatusData(data.data.data);
+                setFetchedStationStatusData(data.data);
                 setIsFetchedStationStatusData(true);
             })
     }
