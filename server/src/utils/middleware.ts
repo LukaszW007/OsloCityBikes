@@ -1,4 +1,4 @@
-import {info, error} from './logger.ts';
+import {info, error} from './logger.js';
 
 export const requestLogger = (request: any, response: any, next: any) => {
 	info('Method:', request.method)

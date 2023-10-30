@@ -1,6 +1,6 @@
 import express from 'express';
-import APIConnector from './connectors/axiosConnector.ts'
-import {requestLogger, unknownEndpoint, errorHandler} from './utils/middleware.ts';
+import APIConnector from './connectors/axiosConnector.js'
+import {requestLogger, unknownEndpoint, errorHandler} from './utils/middleware.js';
 import cors from 'cors';
 
 export interface FetchedAPIData {
