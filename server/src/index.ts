@@ -62,7 +62,7 @@ export interface StationStatusState {
   // },
 }
 
-const app = express();
+export const app = express();
 app.use(cors());
 app.use(requestLogger)
 app.use(express.json())
