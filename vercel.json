@@ -12,11 +12,11 @@
   ],
   "routes": [
       {
-				"src": "./(.*)",
+				"src": "/public/(.*)",
 				"dest": "public/server/build/index.js"
       },
       { 
-        "src": "./(.*)",
+        "src": "/public/(.*)",
         "dest": "public/client/build/index.js"
       }
   ]
