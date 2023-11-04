@@ -5,7 +5,7 @@
     "lib": ["es6", "ES2020", "ESNext"],                    
     "allowJs": true,
     "checkJs": true,
-    "outDir": "./build",                          
+    "outDir": "build",                          
     "rootDir": "src",
     "strict": true,         
     "noImplicitAny": true,
