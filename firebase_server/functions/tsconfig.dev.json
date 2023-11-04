@@ -1,32 +1,32 @@
 {
   "compilerOptions": {
-    "target": "es2020",                          
-    "module": "NodeNext",                    
-    "lib": ["es6", "ES2020", "ESNext"],                     
-    "allowJs": true,
-    "checkJs": true,
-    "outDir": "./build",                          
-    "rootDir": "./",
-    "strict": true,         
-    "noImplicitAny": true,
-    // "noEmit": true,
-    "incremental": true,
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "moduleResolution": "NodeNext",
-    "isolatedModules": true,
-    // "allowImportingTsExtensions": true,
-    "skipLibCheck": true, // very important in the case eslintignore doesn't skip node_modules
+  "target": "es2020",              
+  "module": "NodeNext",          
+  "lib": ["es6", "ES2020", "ESNext"],           
+  "allowJs": true,
+  "checkJs": true,
+  "outDir": "./build",              
+  "rootDir": "./",
+  "strict": true,     
+  "noImplicitAny": true,
+  // "noEmit": true,
+  "incremental": true,
+  "esModuleInterop": true,
+  "resolveJsonModule": true,
+  "moduleResolution": "NodeNext",
+  "isolatedModules": true,
+  // "allowImportingTsExtensions": true,
+  "skipLibCheck": true, // very important in the case eslintignore doesn't skip node_modules
   },
   "compileOnSave": true,
   "include": [
-    ".eslintrc.cjs",
-    "src/"
+  ".eslintrc.cjs",
+  "src/"
   ],
   //   "exclude":[
   //   "node_modules"
   // ],
   "ts-node": {
-    "esm":true,
+  "esm":true,
   }
 }

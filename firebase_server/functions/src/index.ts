@@ -43,12 +43,12 @@ export interface StationInformation {
   is_virtual_station: boolean,
   capacity: number,
   station_area: {
-    type: string,
-    coordinates: any,
+  type: string,
+  coordinates: any,
   },
   rental_uris: {
-    android: string,
-    ios: string
+  android: string,
+  ios: string
   }
 }
 export interface StationInformationState {
@@ -69,10 +69,10 @@ export interface StationStatus {
   num_bikes_available: number,
   num_docks_available: number,
   vehicle_types_available: [
-    {
-    vehicle_type_id: string,
-    count: number
-    }
+  {
+  vehicle_type_id: string,
+  count: number
+  }
   ]
 }
 
@@ -104,7 +104,7 @@ const dataFetching = async (): Promise<any> => {
 			}; 
 
 			// fetchedData.stationInformationState = JSON.parse(data);
-        
+    
 		});
 	APIConnector.getJson('https://gbfs.urbansharing.com/oslobysykkel.no/station_status.json', null)
 		.then((data: any) => {
