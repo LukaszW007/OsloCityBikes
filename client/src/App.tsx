@@ -30,7 +30,7 @@ function App() {
                 setFetchedStationInfoData(data.data);
                 setIsFetchedStationInfoData(true);
             })
-        Xhr.getJson(stationsStatusLocalUrl, null)
+        Xhr.getJson(stationsStatusUrl, null)
             .then((data) => {
                 setFetchedStationStatusData(data.data);
                 setIsFetchedStationStatusData(true);
