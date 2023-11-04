@@ -13,9 +13,9 @@ export enum ValuesToParse {
     num_bikes_available = 'num_bikes_available',
 }
 
-const stationsListUrl = '/api/station_information'
+const stationsListUrl = 'https://oslo-city-bikes-server.vercel.app/api/station_information'
 const stationsListLocalUrl = 'http://localhost:3001/api/station_information'
-const stationsStatusUrl = '/api/station_status'
+const stationsStatusUrl = 'https://oslo-city-bikes-server.vercel.app/api/station_status'
 const stationsStatusLocalUrl = 'http://localhost:3001/api/station_status'
 
 function App() {
