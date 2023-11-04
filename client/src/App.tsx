@@ -25,7 +25,7 @@ function App() {
     const [fetchedStationStatusData, setFetchedStationStatusData] = useState(null);
 
     const dataFetching = () => {
-        Xhr.getJson(stationsListLocalUrl, null)
+        Xhr.getJson(stationsListUrl, null)
             .then((data) => {
                 setFetchedStationInfoData(data.data);
                 setIsFetchedStationInfoData(true);
