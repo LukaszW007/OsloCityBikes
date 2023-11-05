@@ -3,7 +3,7 @@ import './App.css';
 import {Xhr} from "./Utils/Xhr";
 import {StationsList} from "./Components/StationsList";
 import {Spinner} from "./Components/Spinner";
-
+import {Helmet} from "react-helmet";
 
 export enum ValuesToParse {
   station_id = 'station_id',
@@ -24,7 +24,6 @@ function App(props: any) {
   const [isFetchedStationStatusData, setIsFetchedStationStatusData] = useState(false);
   const [fetchedStationInfoData, setFetchedStationInfoData] = useState(null);
   const [fetchedStationStatusData, setFetchedStationStatusData] = useState(null);
-  const [urlPageId, setUrlPageId] = useState(props.pageId | 1);
 
   const dataFetching = () => {
     Xhr.getJson(stationsListUrl, null)
@@ -58,6 +57,11 @@ function App(props: any) {
 
   return (
     <div className="flex flex-col items-center">
+      <Helmet>
+                <meta charSet="utf-8" />
+                <title>Oslo City Bikes</title>
+                <link rel="icon" type="image/png" href="bicycle_white_background.svg" sizes="16x16" />
+      </Helmet>
       <div className='header'>
         <h1 className="flex text-center text-3xl font-bold text-custom-blue">
           Oslo City Bikes
