@@ -1,13 +1,15 @@
-import React, {useState} from 'react';
-import {StationsListItem} from "./StationsListItem";
-import {ValuesToParse} from "../App";
-import {TableHeaders} from "../Utils/TableHeaders";
-import {StationsParser} from "../Utils/StationsParser";
-import {Pagination} from "./Pagination";
+import React, { useEffect, useState } from 'react';
+import { StationsListItem } from "./StationsListItem";
+import { ValuesToParse } from "../App";
+import { TableHeaders } from "../Utils/TableHeaders";
+import { StationsParser } from "../Utils/StationsParser";
+import { Pagination } from "./Pagination";
+import { useParams } from 'react-router-dom';
 
 export interface StationsListProps {
   info: any,
   status: any,
+  pageId: string,
 }
 export interface StationsListItem {
   station_id: string,
@@ -18,16 +20,22 @@ export interface StationsListItem {
 
 //remember to update in the case of updating ValuesToDisplay
 export enum headers {
-  name = 'Stativnavn',
-  address = "Adresse",
-  capacity = 'Kapasitet',
-  num_docks_available = 'Tilgjengelige låser',
-  num_bikes_available = 'Ledige sykler',
+  name = 'Rack name',
+  address = "Adress",
+  capacity = 'Capacity',
+  num_docks_available = 'Availabel slots',
+  num_bikes_available = 'Available bikes',
 }
 
 export function StationsList(props: StationsListProps) {
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(parseInt(props.pageId));
   const [itemsPerPage] = useState(15);
+
+  const pageId = useParams();
+
+  useEffect(()=> {
+    if (pageId.id) setCurrentPage(parseInt(pageId.id))
+  },[])
 
   const parsedList = StationsParser(props);
 

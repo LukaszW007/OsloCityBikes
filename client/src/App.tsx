@@ -4,6 +4,7 @@ import {Xhr} from "./Utils/Xhr";
 import {StationsList} from "./Components/StationsList";
 import {Spinner} from "./Components/Spinner";
 
+
 export enum ValuesToParse {
   station_id = 'station_id',
   name = 'name',
@@ -18,11 +19,12 @@ const stationsListLocalUrl = 'http://localhost:3001/api/station_information'
 const stationsStatusUrl = 'https://oslo-city-bikes-server.vercel.app/api/station_status'
 const stationsStatusLocalUrl = 'http://localhost:3001/api/station_status'
 
-function App() {
+function App(props: any) {
   const [isFetchedStationInfoData, setIsFetchedStationInfoData] = useState(false);
   const [isFetchedStationStatusData, setIsFetchedStationStatusData] = useState(false);
   const [fetchedStationInfoData, setFetchedStationInfoData] = useState(null);
   const [fetchedStationStatusData, setFetchedStationStatusData] = useState(null);
+  const [urlPageId, setUrlPageId] = useState(props.pageId | 1);
 
   const dataFetching = () => {
     Xhr.getJson(stationsListUrl, null)
@@ -52,7 +54,7 @@ function App() {
 
   //Elements to render
   const stationsList = isFetchedStationInfoData && isFetchedStationStatusData ?
-    <StationsList info={fetchedStationInfoData} status={fetchedStationStatusData} /> : <Spinner />
+    <StationsList info={fetchedStationInfoData} status={fetchedStationStatusData} pageId = {props.pageId}/> : <Spinner />
 
   return (
     <div className="flex flex-col items-center">
