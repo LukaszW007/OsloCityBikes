@@ -1,5 +1,6 @@
 # OsloCityBikes
-App to visualize current and historical usage of city bikes in Oslo
+App to visualize current and historical usage of city bikes in Oslo.<br>
+Available *[demo](https://oslo-city-bikes.vercel.app/)*
 
 # App
 The app is divided into frontend part which is responsible for visual, client-side, and backend which is server-side.
