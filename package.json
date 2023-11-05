@@ -4,7 +4,8 @@
   "description": "App to visualize current and historical usage of city bikes in Oslo",
   "main": "index.js",
   "scripts": {
-    "test": "test-dev"
+    "test": "test-dev",
+    "dev": "concurrently \"cd server && npm run dev\" \"cd client && npm run start\""
   },
   "repository": {
     "type": "git",
