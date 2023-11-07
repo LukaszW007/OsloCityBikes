@@ -106,6 +106,10 @@ app.get("/api/station_information", (request, response) => {
   response.json(fetchedAPIData.stationInformation);
 });
 
+app.get("/api/station_information_state", (request, response) => {
+  response.json(fetchedAPIData.stationInformationState);
+});
+
 app.get("/api/station_information/:id", (request, response) => {
   const id = request.params.id;
   let station
@@ -125,6 +129,10 @@ app.get("/api/station_information/:id", (request, response) => {
 
 app.get("/api/station_status", (request, response) => {
   response.json(fetchedAPIData.stationStatus);
+});
+
+app.get("/api/station_status_state", (request, response) => {
+  response.json(fetchedAPIData.stationStatusState);
 });
 
 app.get("/api/station_status/:id", (request, response) => {

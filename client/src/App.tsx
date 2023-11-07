@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import './App.css';
 import {Xhr} from "./Utils/Xhr";
 import {StationsList} from "./Components/StationsList";
@@ -14,45 +14,102 @@ export enum ValuesToParse {
   num_bikes_available = 'num_bikes_available',
 }
 
-const stationsListUrl = 'https://oslo-city-bikes-server.vercel.app/api/station_information'
-const stationsListLocalUrl = 'http://localhost:3001/api/station_information'
-const stationsStatusUrl = 'https://oslo-city-bikes-server.vercel.app/api/station_status'
-const stationsStatusLocalUrl = 'http://localhost:3001/api/station_status'
+export enum TypeOfFetchedData {
+  list = 'list',
+  status = 'status'
+}
+
+let stationsListUrl: string, stationsListUpdatingTimeUrl: string, stationsStatusUrl: string, stationsStatusUpdatingTimeUrl : string
+const APIVersion = '2.3';
+
+if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+  // dev code
+  stationsListUrl = 'http://localhost:3001/api/station_information';
+  stationsListUpdatingTimeUrl = 'http://localhost:3001/api/station_information_state';
+  stationsStatusUrl = 'http://localhost:3001/api/station_status';
+  stationsStatusUpdatingTimeUrl = 'http://localhost:3001/api/station_status_state'
+} else {
+  // production code
+  stationsListUrl = 'https://oslo-city-bikes-server.vercel.app/api/station_information';
+  stationsListUpdatingTimeUrl = 'https://oslo-city-bikes-server.vercel.app/api/station_information_state';
+  stationsStatusUrl = 'https://oslo-city-bikes-server.vercel.app/api/station_status';
+  stationsStatusUpdatingTimeUrl = 'https://oslo-city-bikes-server.vercel.app/api/station_status_state'
+}
 
 function App(props: any) {
   const [isFetchedStationInfoData, setIsFetchedStationInfoData] = useState(false);
   const [isFetchedStationStatusData, setIsFetchedStationStatusData] = useState(false);
   const [fetchedStationInfoData, setFetchedStationInfoData] = useState(null);
   const [fetchedStationStatusData, setFetchedStationStatusData] = useState(null);
+  const [stationsListLastUpdate, setStationsListLastUpdate] = useState(null);
+  const [stationsStatusLastUpdate, setStationsStatusLastUpdate] = useState(null);
+  const interval = useRef<any>(null);
 
-  const dataFetching = () => {
-    Xhr.getJson(stationsListUrl, null)
+  const isDataValid = (fetchedDataTime: number, savedDataTime: number): boolean => {
+    return fetchedDataTime > savedDataTime ? false : true
+  }
+
+  const dataStatesFetching = async (): Promise<void> => {
+    await Xhr.getJson(stationsListUpdatingTimeUrl, null)
+    .then((data) => {
+      if (data && data.data.version === APIVersion) {
+        if (stationsListLastUpdate) {
+          if (isDataValid(data.data.last_updated, stationsListLastUpdate)) {
+            return
+          } else {
+            dataFetching(TypeOfFetchedData.list, stationsListUrl);
+          }
+        } else {
+          setStationsListLastUpdate(data.data.last_updated);
+          dataFetching(TypeOfFetchedData.list, stationsListUrl);
+        }
+      }
+    })
+    await Xhr.getJson(stationsStatusUpdatingTimeUrl, null)
+    .then((data) => {
+      if (data && data.data.version === APIVersion) {
+        if (stationsListLastUpdate) {
+          if (isDataValid(data.data.last_updated, stationsListLastUpdate)) {
+            return
+          } else {
+            dataFetching(TypeOfFetchedData.status, stationsStatusUrl);
+          }
+        } else {
+          setStationsListLastUpdate(data.data.last_updated);
+          dataFetching(TypeOfFetchedData.status, stationsStatusUrl);
+        }
+      }
+    })
+    
+  }
+  const dataFetching = async (type: TypeOfFetchedData, url: string): Promise<void> => {
+    await Xhr.getJson(url, null)
       .then((data) => {
-        setFetchedStationInfoData(data.data);
-        setIsFetchedStationInfoData(true);
-      })
-    Xhr.getJson(stationsStatusUrl, null)
-      .then((data) => {
-        setFetchedStationStatusData(data.data);
-        setIsFetchedStationStatusData(true);
+        if (data && type === TypeOfFetchedData.list) {
+          setFetchedStationInfoData(data.data);
+          setIsFetchedStationInfoData(true);
+        } else if (data && type === TypeOfFetchedData.status) {
+          setFetchedStationStatusData(data.data);
+          setIsFetchedStationStatusData(true);
+        }
+        
       })
   }
 
   useEffect(() => {
-    let interval: any;
     if (!isFetchedStationInfoData && !isFetchedStationStatusData) {
-      dataFetching(); // fetch on component mount
-      interval = setInterval(() => {
-        dataFetching()
+      dataStatesFetching(); // fetch on component mount
+      interval.current = setInterval(() => {
+        dataStatesFetching()
       },(5*60*1000)); // fetching data every 5min to update the table
     }
     return () => {
-      clearInterval(interval);
+      clearInterval(interval.current);
     }
   }, []);
 
   //Elements to render
-  const stationsList = isFetchedStationInfoData && isFetchedStationStatusData ?
+  const stationsList = fetchedStationInfoData && fetchedStationStatusData ?
     <StationsList info={fetchedStationInfoData} status={fetchedStationStatusData} pageId = {props.pageId}/> : <Spinner />
 
   return (
