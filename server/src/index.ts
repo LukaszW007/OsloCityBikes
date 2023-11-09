@@ -73,6 +73,7 @@ const dataFetching = async (): Promise<any> => {
   APIConnector.getJson('https://gbfs.urbansharing.com/oslobysykkel.no/station_information.json', null)
   .then((data: any) => {
     // console.log('data',data);
+    console.info('Stations information data is fetched', data.headers.date);
     fetchedData.stationInformation = data.data.data.stations;
     fetchedData.stationInformationState = {
     last_updated: data.data.last_updated,
@@ -86,6 +87,7 @@ const dataFetching = async (): Promise<any> => {
   APIConnector.getJson('https://gbfs.urbansharing.com/oslobysykkel.no/station_status.json', null)
   .then((data: any) => {
     // console.log('data',data);
+    console.info('Stations status data is fetched', data.headers.date);
     fetchedData.stationStatus = data.data.data.stations;
     fetchedData.stationStatusState = {
     last_updated: data.data.last_updated,
@@ -97,6 +99,11 @@ const dataFetching = async (): Promise<any> => {
   return fetchedData;
 }
 const fetchedAPIData: FetchedAPIData = await dataFetching();
+
+setInterval(() => {
+  dataFetching();
+  console.log('Data is fetching')
+},(60*1000));
 
 app.get("/", (request, response) => {
   response.send("<h1>Hello World!</h1>");

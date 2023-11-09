@@ -55,7 +55,7 @@ function App(props: any) {
   useEffect(() => {
     interval.current = setInterval(() => {
       dataStatesFetching()
-    },(5*60*1000)); // fetching data every 5min to update the table
+    },(60*1000)); // fetching data every 5min to update the table
 
     return () => {
       clearInterval(interval.current);
@@ -73,6 +73,7 @@ function App(props: any) {
       if (data && data.data.version === APIVersion) {
         if (stationsListLastUpdate) {
           if (isDataValid(data.data.last_updated, stationsListLastUpdate)) {
+            console.info('Stations information data is up to date');
             return
           } else {
             dataFetching(TypeOfFetchedData.list, stationsListUrl);
@@ -88,6 +89,7 @@ function App(props: any) {
       if (data && data.data.version === APIVersion) {
         if (stationsStatusLastUpdate) {
           if (isDataValid(data.data.last_updated, stationsStatusLastUpdate)) {
+            console.info('Stations status data is up to date');
             return
           } else {
             dataFetching(TypeOfFetchedData.status, stationsStatusUrl);
