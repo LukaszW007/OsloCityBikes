@@ -43,8 +43,26 @@ function App(props: any) {
   const [fetchedStationStatusData, setFetchedStationStatusData] = useState(null);
   const [stationsListLastUpdate, setStationsListLastUpdate] = useState(null);
   const [stationsStatusLastUpdate, setStationsStatusLastUpdate] = useState(null);
+  
   const interval = useRef<any>(null);
+  
+  useEffect(() => {
+    if (!isFetchedStationInfoData && !isFetchedStationStatusData) {
+      dataStatesFetching(); // fetch on component mount
+    }
 
+  }, []);
+  useEffect(() => {
+    interval.current = setInterval(() => {
+      dataStatesFetching()
+    },(5*60*1000)); // fetching data every 5min to update the table
+
+    return () => {
+      clearInterval(interval.current);
+    }
+  }, [fetchedStationInfoData, fetchedStationStatusData]);
+
+  
   const isDataValid = (fetchedDataTime: number, savedDataTime: number): boolean => {
     return fetchedDataTime > savedDataTime ? false : true
   }
@@ -68,14 +86,14 @@ function App(props: any) {
     await Xhr.getJson(stationsStatusUpdatingTimeUrl, null)
     .then((data) => {
       if (data && data.data.version === APIVersion) {
-        if (stationsListLastUpdate) {
-          if (isDataValid(data.data.last_updated, stationsListLastUpdate)) {
+        if (stationsStatusLastUpdate) {
+          if (isDataValid(data.data.last_updated, stationsStatusLastUpdate)) {
             return
           } else {
             dataFetching(TypeOfFetchedData.status, stationsStatusUrl);
           }
         } else {
-          setStationsListLastUpdate(data.data.last_updated);
+          setStationsStatusLastUpdate(data.data.last_updated);
           dataFetching(TypeOfFetchedData.status, stationsStatusUrl);
         }
       }
@@ -96,17 +114,6 @@ function App(props: any) {
       })
   }
 
-  useEffect(() => {
-    if (!isFetchedStationInfoData && !isFetchedStationStatusData) {
-      dataStatesFetching(); // fetch on component mount
-      interval.current = setInterval(() => {
-        dataStatesFetching()
-      },(5*60*1000)); // fetching data every 5min to update the table
-    }
-    return () => {
-      clearInterval(interval.current);
-    }
-  }, []);
 
   //Elements to render
   const stationsList = fetchedStationInfoData && fetchedStationStatusData ?
