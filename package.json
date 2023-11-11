@@ -5,8 +5,17 @@
   "main": "index.js",
   "scripts": {
     "test": "test-dev",
-    "dev": "concurrently \"cd server && npm run dev\" \"cd client && npm run start\""
+    "dev": "concurrently \"cd server && npm run dev\" \"cd client && npm run start\"",
+    "ts.check": "tsc --project tsconfig.json",
+    "build-backend": "\"cd server && rimraf build && tsc",
+    "build-frontend": "\"cd client && react-scripts build",
+    "add-build": "\"cd client && git add build \"cd client && git add build"
   },
+  "pre-commit": [
+    "build-backend",
+    "build-frontend",
+    "add-build"
+    ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/LukaszW007/OsloCityBikes.git"
