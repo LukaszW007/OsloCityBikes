@@ -7,9 +7,9 @@
     "test": "test-dev",
     "dev": "concurrently \"cd server && npm run dev\" \"cd client && npm run start\"",
     "ts.check": "tsc --project tsconfig.json",
-    "build-backend": "\"cd server && rimraf build && tsc",
-    "build-frontend": "\"cd client && react-scripts build",
-    "add-build": "\"cd client && git add build \"cd client && git add build"
+    "build-backend": "cd server && npm run build",
+    "build-frontend": "cd client && npm run build",
+    "add-build": "\"cd client && git add build\" \"cd client && git add build\""
   },
   "pre-commit": [
     "build-backend",
@@ -30,6 +30,7 @@
   },
   "homepage": "https://github.com/LukaszW007/OsloCityBikes#readme",
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "8.2.2",
+    "pre-commit": "1.2.2"
   }
 }

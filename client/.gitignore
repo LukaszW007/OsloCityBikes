@@ -9,7 +9,6 @@
 /coverage
 
 # production
-/build
 /.idea
 
 # misc
@@ -22,3 +21,7 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# dotenv environment variables file
+.env
+.env.test
