@@ -10,7 +10,6 @@
   "strict": true,     
   "noImplicitAny": true,
   // "noEmit": true,
-  "removeComments": true,        /* Do not emit comments to output. */
   "incremental": true,
   "esModuleInterop": true,
   "resolveJsonModule": true,

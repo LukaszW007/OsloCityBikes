@@ -9,7 +9,7 @@
     "ts.check": "tsc --project tsconfig.json",
     "build-backend": "cd server && npm run build",
     "build-frontend": "cd client && npm run build",
-    "add-build": "\"cd client && git add build\" \"cd client && git add build\""
+    "add-build": "git add client/build && git add server/build"
   },
   "pre-commit": [
     "build-backend",

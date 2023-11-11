@@ -9,15 +9,10 @@
   "build": "rimraf build && tsc",
   "build-check": "tsc",
   "ts.check": "tsc --project tsconfig.json",
-  "add-build": "git add dist",
+  "add-build": "git add build",
   "test": "echo \\\"Error: no test specified\\\" && exit 1",
-  "clean": "rimraf dist"
+  "clean": "rimraf build"
   },
-  "pre-commit": [
-  "ts.check",
-  "build",
-  "add-build"
-  ],
   "author": "LukaszW",
   "license": "ISC",
   "type": "module",
