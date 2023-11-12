@@ -11,7 +11,7 @@ export default class APIConnector {
             return data;
         })
             .catch((error) => {
-            console.error(error);
+            console.log(`${error.name}\n${error.message}`);
         });
     }
 }
