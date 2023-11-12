@@ -70,33 +70,38 @@ function App(props: any) {
   const dataStatesFetching = async (): Promise<void> => {
     await Xhr.getJson(stationsListUpdatingTimeUrl, null)
     .then((data) => {
-      if (data && data.data.version === APIVersion) {
-        if (stationsListLastUpdate) {
-          if (isDataValid(data.data.last_updated, stationsListLastUpdate)) {
-            console.info('Stations information data is up to date');
-            return
+      if (data) {
+        if (data.data.version === APIVersion) {
+          if (stationsListLastUpdate) {
+            if (isDataValid(data.data.last_updated, stationsListLastUpdate)) {
+              console.info('Stations information data is up to date');
+              return
+            } else {
+              dataFetching(TypeOfFetchedData.list, stationsListUrl);
+            }
           } else {
+            setStationsListLastUpdate(data.data.last_updated);
             dataFetching(TypeOfFetchedData.list, stationsListUrl);
           }
-        } else {
-          setStationsListLastUpdate(data.data.last_updated);
-          dataFetching(TypeOfFetchedData.list, stationsListUrl);
         }
       }
+      
     })
     await Xhr.getJson(stationsStatusUpdatingTimeUrl, null)
     .then((data) => {
-      if (data && data.data.version === APIVersion) {
-        if (stationsStatusLastUpdate) {
-          if (isDataValid(data.data.last_updated, stationsStatusLastUpdate)) {
-            console.info('Stations status data is up to date');
-            return
+      if (data) {
+        if (data.data.version === APIVersion) {
+          if (stationsStatusLastUpdate) {
+            if (isDataValid(data.data.last_updated, stationsStatusLastUpdate)) {
+              console.info('Stations status data is up to date');
+              return
+            } else {
+              dataFetching(TypeOfFetchedData.status, stationsStatusUrl);
+            }
           } else {
+            setStationsStatusLastUpdate(data.data.last_updated);
             dataFetching(TypeOfFetchedData.status, stationsStatusUrl);
           }
-        } else {
-          setStationsStatusLastUpdate(data.data.last_updated);
-          dataFetching(TypeOfFetchedData.status, stationsStatusUrl);
         }
       }
     })
