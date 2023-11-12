@@ -70,7 +70,7 @@ function App(props: any) {
   const dataStatesFetching = async (): Promise<void> => {
     await Xhr.getJson(stationsListUpdatingTimeUrl, null)
     .then((data) => {
-      if (data && data != null) {
+      if (data && data.data != null) {
         if (data.data.version === APIVersion) {
           if (stationsListLastUpdate) {
             if (isDataValid(data.data.last_updated, stationsListLastUpdate)) {
@@ -95,7 +95,7 @@ function App(props: any) {
     })
     await Xhr.getJson(stationsStatusUpdatingTimeUrl, null)
     .then((data) => {
-      if (data && data != null) {
+      if (data && data.data != null) {
         if (data.data.version === APIVersion) {
           if (stationsStatusLastUpdate) {
             if (isDataValid(data.data.last_updated, stationsStatusLastUpdate)) {
