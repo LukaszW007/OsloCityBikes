@@ -71,9 +71,10 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
 }
 const corsOptions ={
   origin: originUrl, 
-  credentials: true,            //access-control-allow-credentials:true
+  credentials: false,            //access-control-allow-credentials:true
   optionSuccessStatus: 200
 }
+console.log('corsOptions',corsOptions);
 
 app.use(cors(corsOptions));
 app.use(requestLogger)
