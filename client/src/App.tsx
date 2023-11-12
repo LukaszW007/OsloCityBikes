@@ -18,7 +18,7 @@ export enum TypeOfFetchedData {
   list = 'list',
   status = 'status'
 }
-
+let refreshingCount = 0;
 let stationsListUrl: string, stationsListUpdatingTimeUrl: string, stationsStatusUrl: string, stationsStatusUpdatingTimeUrl : string
 const APIVersion = '2.3';
 
@@ -70,7 +70,7 @@ function App(props: any) {
   const dataStatesFetching = async (): Promise<void> => {
     await Xhr.getJson(stationsListUpdatingTimeUrl, null)
     .then((data) => {
-      if (data) {
+      if (data && data != null) {
         if (data.data.version === APIVersion) {
           if (stationsListLastUpdate) {
             if (isDataValid(data.data.last_updated, stationsListLastUpdate)) {
@@ -84,12 +84,18 @@ function App(props: any) {
             dataFetching(TypeOfFetchedData.list, stationsListUrl);
           }
         }
+        refreshingCount = 0;
+      } else {
+        if (refreshingCount < 5) {
+          dataStatesFetching();
+          refreshingCount++;
+        }
       }
       
     })
     await Xhr.getJson(stationsStatusUpdatingTimeUrl, null)
     .then((data) => {
-      if (data) {
+      if (data && data != null) {
         if (data.data.version === APIVersion) {
           if (stationsStatusLastUpdate) {
             if (isDataValid(data.data.last_updated, stationsStatusLastUpdate)) {
@@ -102,6 +108,12 @@ function App(props: any) {
             setStationsStatusLastUpdate(data.data.last_updated);
             dataFetching(TypeOfFetchedData.status, stationsStatusUrl);
           }
+        }
+        refreshingCount = 0;
+      } else {
+        if (refreshingCount < 5) {
+          dataStatesFetching();
+          refreshingCount++;
         }
       }
     })
