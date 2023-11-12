@@ -6,7 +6,7 @@
   "start": "ts-node ./src/index.ts",
   "start2": "nodemon ./build/index.js",
   "dev": "nodemon ./src/index.ts",
-  "build": "rimraf build && tsc",
+  "build": "rimraf build && rimraf tsconfig.tsbuildinfo && tsc",
   "build-check": "tsc",
   "ts.check": "tsc --project tsconfig.json",
   "add-build": "git add build",
