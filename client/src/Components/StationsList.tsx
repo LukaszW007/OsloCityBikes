@@ -5,6 +5,7 @@ import { TableHeaders } from "../Utils/TableHeaders";
 import { StationsParser } from "../Utils/StationsParser";
 import { Pagination } from "./Pagination";
 import { useParams } from 'react-router-dom';
+import { Page404 } from './404';
 
 export interface StationsListProps {
   info: any,
@@ -60,22 +61,24 @@ export function StationsList(props: StationsListProps) {
     )
   })
 
+  const list =  <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+                  <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                    {headersToDisplay}
+                    </tr>
+                  </thead>
+                    {stationsList}
+                  </table>
+                </div>
+
   return (
     <>
       <div className="flex flex-col my-10">
         <div className="flex flex-col my-10">
           <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-            <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-              <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                {headersToDisplay}
-                </tr>
-              </thead>
-              {stationsList}
-              </table>
-            </div>
+              {currentPage <= Math.ceil(parsedList.length/itemsPerPage) ? list : <Page404 />}
             </div>
           </div>
         </div>
