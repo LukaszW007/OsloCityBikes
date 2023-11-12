@@ -12,7 +12,7 @@ export default class APIConnector {
 			return data;
 		})
 		.catch((error: any) => {
-			console.error(error);
+			console.log(`${error.name}\n${error.message}`);
 		});
   }
 }
