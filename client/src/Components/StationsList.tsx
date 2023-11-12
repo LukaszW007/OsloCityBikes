@@ -72,13 +72,23 @@ export function StationsList(props: StationsListProps) {
                   </table>
                 </div>
 
+  const paginationController = () => {
+    if (currentPage === 0) {
+      return <Page404 />
+    } else if (currentPage <= Math.ceil(parsedList.length/itemsPerPage)) {
+      return list;
+    } else {
+      return <Page404 />
+    } 
+  }
+
   return (
     <>
       <div className="flex flex-col my-10">
         <div className="flex flex-col my-10">
           <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-              {currentPage <= Math.ceil(parsedList.length/itemsPerPage) ? list : <Page404 />}
+              {paginationController()}
             </div>
           </div>
         </div>
