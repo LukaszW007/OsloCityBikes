@@ -63,7 +63,19 @@ export interface StationStatusState {
 }
 
 export const app = express();
-app.use(cors());
+
+let originUrl: string = 'https://oslo-city-bikes.vercel.app';
+
+if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+  originUrl = 'http://localhost:3000'
+}
+const corsOptions ={
+  origin: originUrl, 
+  credentials: true,            //access-control-allow-credentials:true
+  optionSuccessStatus: 200
+}
+
+app.use(cors(corsOptions));
 app.use(requestLogger)
 app.use(express.json())
 // const PORT = process.env.PORT || 3001;
