@@ -12,7 +12,7 @@ const corsOptions = {
     credentials: false,
     optionSuccessStatus: 200
 };
-console.log('corsOptions', corsOptions);
+// console.log('corsOptions',corsOptions);
 app.use(cors(corsOptions));
 app.use(requestLogger);
 app.use(express.json());

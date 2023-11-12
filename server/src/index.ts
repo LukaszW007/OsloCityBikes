@@ -74,7 +74,7 @@ const corsOptions ={
   credentials: false,            //access-control-allow-credentials:true
   optionSuccessStatus: 200
 }
-console.log('corsOptions',corsOptions);
+// console.log('corsOptions',corsOptions);
 
 app.use(cors(corsOptions));
 app.use(requestLogger)
