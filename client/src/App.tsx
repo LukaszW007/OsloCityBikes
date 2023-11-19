@@ -3,6 +3,7 @@ import './App.css';
 import {Xhr} from "./Utils/Xhr";
 import {StationsList} from "./Components/StationsList";
 import {Spinner} from "./Components/Spinner";
+import {MapLeaflet} from "./Components/Map";
 import {Helmet} from "react-helmet";
 
 export enum ValuesToParse {
@@ -139,7 +140,7 @@ function App(props: any) {
     <StationsList info={fetchedStationInfoData} status={fetchedStationStatusData} pageId = {props.pageId}/> : <Spinner />
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center h-[100vh]">
       <Helmet>
                 <meta charSet="utf-8" />
                 <title>Oslo City Bikes</title>
@@ -150,8 +151,13 @@ function App(props: any) {
           Oslo City Bikes
         </h1>
       </div>
-      <div className="flex flex-col justify-items-center">
-        {stationsList}
+      <div className='relative flex sm:flex-col md:flex-col lg:flex-row w-[100vw] h-[100vh]'>
+        <div className="">
+          <MapLeaflet />
+        </div>
+        <div className="relative lg:w-[40vw] md:w-[90vw] sm:w-[90vw] flex flex-col justify-items-center ml-8">
+          {stationsList}
+        </div>
       </div>
     </div>
   );

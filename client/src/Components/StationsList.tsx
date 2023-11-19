@@ -84,15 +84,15 @@ export function StationsList(props: StationsListProps) {
 
   return (
     <>
-      <div className="flex flex-col my-10">
-        <div className="flex flex-col my-10">
-          <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-            <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-              {paginationController()}
-            </div>
+      <div className="flex flex-col">
+        {/* <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8"> */}
+        <div className="overflow-x-auto mb-8">
+          <div className="align-middle inline-block min-w-full">
+            {paginationController()}
           </div>
         </div>
-        <div className="flex my-10 items-center">
+        <div className="flex items-center">
           <Pagination
             currentPage = {currentPage}
             itemsPerPage={itemsPerPage}
