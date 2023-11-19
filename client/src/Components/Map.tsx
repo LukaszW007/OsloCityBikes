@@ -16,7 +16,7 @@ export const MapLeaflet = () => {
   // }
   
   return (
-    <MapContainer className="lg:h-[95vh] lg:w-[55vw] md:h-[100vh] md:w-[100%] sm:h-[100vh] sm:w-[100%]" center={[59.92, 10.71]} zoom={12} scrollWheelZoom={true} >
+    <MapContainer className="lg:h-[95vh] lg:w-[55vw] md:h-[50vh] md:w-[100%] sm:h-[100vh] sm:w-[100%]" center={[59.92, 10.71]} zoom={12} scrollWheelZoom={true} >
       <TileLayer
         attribution='Oslo City Bikes'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

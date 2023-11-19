@@ -151,7 +151,7 @@ function App(props: any) {
           Oslo City Bikes
         </h1>
       </div>
-      <div className='relative flex sm:flex-col md:flex-col lg:flex-row w-[100vw] h-[100vh]'>
+      <div className='relative w-[97vw] h-[100vh] flex sm:flex-col md:flex-col lg:flex-row '>
         <div className="">
           <MapLeaflet />
         </div>
