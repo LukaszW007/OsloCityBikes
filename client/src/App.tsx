@@ -89,8 +89,9 @@ function App(props: any) {
   const [fetchedStationInfoData, setFetchedStationInfoData] = useState<
     StationInformation[]
   >([]);
-  const [fetchedStationStatusData, setFetchedStationStatusData] =
-    useState<StationStatus[]>();
+  const [fetchedStationStatusData, setFetchedStationStatusData] = useState<
+    StationStatus[]
+  >([]);
   const [stationsListLastUpdate, setStationsListLastUpdate] = useState(null);
   const [stationsStatusLastUpdate, setStationsStatusLastUpdate] =
     useState(null);
@@ -216,7 +217,10 @@ function App(props: any) {
       </div>
       <div className="relative w-[97vw] h-[100vh] flex sm:flex-col md:flex-col lg:flex-row ">
         <div className="">
-          <MapLeaflet stationsList={fetchedStationInfoData} />
+          <MapLeaflet
+            stationsList={fetchedStationInfoData}
+            stationsStatusList={fetchedStationStatusData}
+          />
         </div>
         <div className="relative lg:w-[40vw] md:w-[90vw] sm:w-[90vw] flex flex-col justify-items-center ml-8">
           {stationsList}

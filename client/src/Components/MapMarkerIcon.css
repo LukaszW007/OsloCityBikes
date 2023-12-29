@@ -1,0 +1,16 @@
+.pin {
+  background-color: beige;
+  border-radius: 1rem;
+}
+
+.leaflet-marker-icon-red {
+  background-color: red;
+}
+
+.leaflet-marker-icon-green {
+  background-color: green;
+}
+
+.leaflet-marker-icon-yellow {
+  background-color: yellow;
+}
