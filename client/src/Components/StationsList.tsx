@@ -22,7 +22,7 @@ export interface StationsListItem {
 //remember to update in the case of updating ValuesToDisplay
 export enum headers {
   name = 'Rack name',
-  address = "Adress",
+  address = "Address",
   capacity = 'Capacity',
   num_docks_available = 'Availabel slots',
   num_bikes_available = 'Available bikes',
