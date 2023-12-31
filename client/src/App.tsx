@@ -141,7 +141,7 @@ function App(props: any) {
         }
         refreshingCount = 0;
       } else {
-        if (refreshingCount < 5) {
+        if (refreshingCount < 10) {
           dataStatesFetching();
           refreshingCount++;
         }
@@ -164,7 +164,7 @@ function App(props: any) {
         }
         refreshingCount = 0;
       } else {
-        if (refreshingCount < 5) {
+        if (refreshingCount < 10) {
           dataStatesFetching();
           refreshingCount++;
         }
