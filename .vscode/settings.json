@@ -1,3 +1,6 @@
 {
-  "editor.tabSize": 2
+  "editor.spaces": 2,
+  "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
+  "editor.indentSize": "spaces",
+  "editor.detectIndentation": false,
 }

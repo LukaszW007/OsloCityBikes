@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import "./App.css";
 import { Xhr } from "./Utils/Xhr";
 import { StationsList } from "./Components/StationsList";
-import { Spinner } from "./Components/Spinner";
+import { Spinner, SpinnerBike } from "./Components/Spinner";
 import { MapLeaflet } from "./Components/Map";
 import { Helmet } from "react-helmet";
 
@@ -188,14 +188,14 @@ function App(props: any) {
 
   //Elements to render
   const stationsList =
-    fetchedStationInfoData && fetchedStationStatusData ? (
+    fetchedStationInfoData.length > 0 && fetchedStationStatusData.length > 0 ? (
       <StationsList
         info={fetchedStationInfoData}
         status={fetchedStationStatusData}
         pageId={props.pageId}
       />
     ) : (
-      <Spinner />
+      <SpinnerBike />
     );
 
   return (
