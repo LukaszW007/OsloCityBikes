@@ -86,6 +86,7 @@ function App(props: any) {
     useState(false);
   const [isFetchedStationStatusData, setIsFetchedStationStatusData] =
     useState(false);
+  const [fetchedDataCount, setFetchedDataCount] = useState(0);
   const [fetchedStationInfoData, setFetchedStationInfoData] = useState<
     StationInformation[]
   >([]);
@@ -178,9 +179,11 @@ function App(props: any) {
     await Xhr.getJson(url, null).then((data) => {
       if (data && type === TypeOfFetchedData.list) {
         setFetchedStationInfoData(data.data);
+        setFetchedDataCount(fetchedDataCount + 1);
         setIsFetchedStationInfoData(true);
       } else if (data && type === TypeOfFetchedData.status) {
         setFetchedStationStatusData(data.data);
+        setFetchedDataCount(fetchedDataCount + 1);
         setIsFetchedStationStatusData(true);
       }
     });
@@ -195,7 +198,7 @@ function App(props: any) {
         pageId={props.pageId}
       />
     ) : (
-      <SpinnerBike />
+      <SpinnerBike fetchedDataCount={fetchedDataCount} />
     );
 
   return (

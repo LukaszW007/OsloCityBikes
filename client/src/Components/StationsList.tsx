@@ -6,6 +6,7 @@ import { StationsParser } from "../Utils/StationsParser";
 import { Pagination } from "./Pagination";
 import { useParams } from "react-router-dom";
 import { Page404 } from "./404";
+import { Spinner } from "./Spinner";
 
 export interface StationsListProps {
   info: any;
@@ -86,6 +87,8 @@ export function StationsList(props: StationsListProps) {
       return <Page404 />;
     } else if (currentPage <= Math.ceil(parsedList.length / itemsPerPage)) {
       return list;
+    } else if (!currentPage) {
+      return <Spinner />;
     } else {
       return <Page404 />;
     }

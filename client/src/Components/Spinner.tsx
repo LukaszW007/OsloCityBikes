@@ -1,16 +1,22 @@
 import React from "react";
 import "./Spinner.css";
 
+function LoadingText(count: number) {
+  return (
+    <div className="loading__text flex justify-center">Loaded {count} of 2</div>
+  );
+}
+
 export function Spinner() {
   return (
-    <div className="flex justify-center w-screen h-screen">
+    <div className="flex justify-center h-screen">
       <div className="w-12 h-12 border-4 border-blue-600 rounded-full loader"></div>
     </div>
   );
 }
-export function SpinnerBike() {
+export function SpinnerBike(props: { fetchedDataCount: number }) {
   return (
-    <div className="flex justify-center h-screen">
+    <div className="flex flex-col mx-auto h-screen">
       <div className="bike">
         <div className="wheel wheel__left">
           <div className="spoke spoke__left--1"></div>
@@ -34,6 +40,7 @@ export function SpinnerBike() {
         <div className="saddle"></div>
         <div className="handlebars"></div>
       </div>
+      {LoadingText(props.fetchedDataCount)}
     </div>
   );
 }

@@ -208,3 +208,7 @@
   height: 25px;
   border-radius: 60% 1000% 500% 300%;
 }
+
+.loading__text {
+  color: #d1d2d5;
+}
