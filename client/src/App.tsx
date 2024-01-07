@@ -191,7 +191,10 @@ function App(props: any) {
 
   //Elements to render
   const stationsList =
-    fetchedStationInfoData.length > 0 && fetchedStationStatusData.length > 0 ? (
+    fetchedStationInfoData &&
+    fetchedStationStatusData &&
+    fetchedStationInfoData.length > 0 &&
+    fetchedStationStatusData.length > 0 ? (
       <StationsList
         info={fetchedStationInfoData}
         status={fetchedStationStatusData}
