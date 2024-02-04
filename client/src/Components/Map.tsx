@@ -24,8 +24,15 @@ export const MapLeaflet: FC<MapLeafletProps> = ({
 	const [stationsStatus, setStationsStatus] = useState<StationStatus[]>([]);
 
 	useEffect(() => {
-		setStations(stationsList);
-		setStationsStatus(stationsStatusList);
+		if (Array.isArray(stationsList) && stationsList.length > 0) {
+			setStations(stationsList);
+		}
+		if (
+			Array.isArray(stationsStatusList) &&
+			stationsStatusList.length > 0
+		) {
+			setStationsStatus(stationsStatusList);
+		}
 	}, [stationsList, stationsStatusList]);
 
 	const transformToMarker = (
