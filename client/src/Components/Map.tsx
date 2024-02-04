@@ -20,10 +20,8 @@ export const MapLeaflet: FC<MapLeafletProps> = ({
 	const zoomLevel = 12;
 	const hasScrollZoom = true;
 
-	const [stations, setStations] =
-		useState<StationInformation[]>(stationsList);
-	const [stationsStatus, setStationsStatus] =
-		useState<StationStatus[]>(stationsStatusList);
+	const [stations, setStations] = useState<StationInformation[]>([]);
+	const [stationsStatus, setStationsStatus] = useState<StationStatus[]>([]);
 
 	useEffect(() => {
 		setStations(stationsList);
