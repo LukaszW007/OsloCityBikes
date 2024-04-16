@@ -7,7 +7,10 @@ import mongoose from "mongoose";
 // 	process.exit(1);
 // }
 const password = process.argv[2];
-const url = process.env.MONGODB_URI;
+let url = process.env.MONGODB_URI;
+if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
+    url = process.env.MONGODB_URI_DEV;
+}
 mongoose.set("strictQuery", false);
 mongoose
     .connect(url)
@@ -123,7 +126,8 @@ export const deleteAllInCollection = async () => {
     console.log("collectionData ", collectionData);
 };
 export const Station = mongoose.model("Station", stationSchema);
-export const StationInfo = mongoose.model("StationInfo", stationStatus);
+export const StationInfo = mongoose.model("stations_status", stationStatus);
+// export const StationInfo = mongoose.model("StationInfo", stationStatus);
 // Station.find({}).then((result) => {
 // 	result.forEach((note) => {
 // 		console.log(note);

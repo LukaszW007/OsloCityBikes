@@ -129,15 +129,23 @@ app.get("/api/station_status/:id", (request, response) => {
 //fething from Mongo
 ////////////////////
 app.get("/api/stations", async (request, response) => {
-    // const apiData = await fetchedAPIData.stationInformation;
-    const collectionData = await Station.find().lean(true);
-    // await updateStationsCollection(apiData!);
+    let collectionData = await Station.find().lean(true);
+    if (collectionData.length <= 0) {
+        const apiData = await fetchedAPIData.stationInformation;
+        await updateStationsCollection(apiData);
+        collectionData = await Station.find().lean(true);
+    }
     response.json(collectionData);
 });
 app.get("/api/stations_info", async (request, response) => {
-    // const apiStatusData = await fetchedAPIData.stationStatus;
-    // await addApiStatusDataToStationsInfoCollection(apiStatusData!);
-    const collectionStatusData = await StationInfo.find().lean(true);
+    const apiStatusData = await fetchedAPIData.stationStatus;
+    await addApiStatusDataToStationsInfoCollection(apiStatusData);
+    let collectionStatusData = await StationInfo.find().lean(true);
+    if (collectionStatusData.length <= 0) {
+        const apiStatusData = await fetchedAPIData.stationStatus;
+        await addApiStatusDataToStationsInfoCollection(apiStatusData);
+        collectionStatusData = await StationInfo.find().lean(true);
+    }
     response.json(collectionStatusData);
 });
 app.get("/api/delete_all_stations_info", async (request, response) => {
@@ -147,10 +155,22 @@ app.get("/api/delete_all_stations_info", async (request, response) => {
 });
 app.get("/api/stations_info/:id", async (request, response) => {
     const id = request.params.id;
-    const collectionStatusData = await StationInfo.find({
+    StationInfo.find({
         station_id: id,
-    }).lean(true);
-    response.json(collectionStatusData);
+    })
+        .lean(true)
+        .then((station) => {
+        if (station.length > 0) {
+            response.json(station);
+        }
+        else {
+            response.status(404).end();
+        }
+    })
+        .catch((error) => {
+        console.log(error);
+        response.status(500).end();
+    });
 });
 app.use(unknownEndpoint);
 const PORT = process.env.PORT;
