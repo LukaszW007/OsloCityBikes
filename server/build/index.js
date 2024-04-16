@@ -1,8 +1,17 @@
+import dotenv from "dotenv";
+dotenv.config();
 import express from "express";
 import APIConnector from "./connectors/axiosConnector.js";
 import { requestLogger, unknownEndpoint, } from "./utils/middleware.js";
 import cors from "cors";
+import { Station, StationInfo, addApiStatusDataToStationsInfoCollection, deleteAllInCollection, updateStationsCollection, } from "./mongoDB/mongo.js";
 export const app = express();
+//MongoDB
+// const password = process.argv[2];
+// const url = `mongodb+srv://wisznu07:${password}@cluster0.wzqvkl2.mongodb.net/?retryWrites=true&w=majority`;
+// mongoose.set("strictQuery", false);
+// mongoose.connect(url);
+// const Station = mongoose.model("Station", stationSchema);
 let originUrl = "https://oslo-city-bikes.vercel.app";
 if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
     originUrl = "http://localhost:3000";
@@ -52,10 +61,23 @@ const dataFetching = async () => {
     return fetchedData;
 };
 const fetchedAPIData = await dataFetching();
+//////
+//Data fetching from API to update the map
 setInterval(() => {
     dataFetching();
     console.log("Data is fetching");
 }, 60 * 1000);
+//////
+//Data fetching from API to update mongoDB
+setInterval(() => {
+    dataFetching();
+    const apiStatusData = fetchedAPIData.stationStatus;
+    addApiStatusDataToStationsInfoCollection(apiStatusData);
+    const apiData = fetchedAPIData.stationInformation;
+    updateStationsCollection(apiData);
+    console.log("Data is fetching to update mongoDB");
+}, 30 * 60 * 1000);
+// fetching directly from service API
 app.get("/", (request, response) => {
     response.send("<h1>Oslo City Bikes server</h1>");
 });
@@ -103,8 +125,35 @@ app.get("/api/station_status/:id", (request, response) => {
         response.status(404).end();
     }
 });
+////////////////////
+//fething from Mongo
+////////////////////
+app.get("/api/stations", async (request, response) => {
+    // const apiData = await fetchedAPIData.stationInformation;
+    const collectionData = await Station.find().lean(true);
+    // await updateStationsCollection(apiData!);
+    response.json(collectionData);
+});
+app.get("/api/stations_info", async (request, response) => {
+    // const apiStatusData = await fetchedAPIData.stationStatus;
+    // await addApiStatusDataToStationsInfoCollection(apiStatusData!);
+    const collectionStatusData = await StationInfo.find().lean(true);
+    response.json(collectionStatusData);
+});
+app.get("/api/delete_all_stations_info", async (request, response) => {
+    await deleteAllInCollection();
+    const collectionStatusData = await StationInfo.find().lean(true);
+    response.json(collectionStatusData);
+});
+app.get("/api/stations_info/:id", async (request, response) => {
+    const id = request.params.id;
+    const collectionStatusData = await StationInfo.find({
+        station_id: id,
+    }).lean(true);
+    response.json(collectionStatusData);
+});
 app.use(unknownEndpoint);
-const PORT = 3001;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
