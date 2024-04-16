@@ -138,8 +138,6 @@ app.get("/api/stations", async (request, response) => {
     response.json(collectionData);
 });
 app.get("/api/stations_info", async (request, response) => {
-    const apiStatusData = await fetchedAPIData.stationStatus;
-    await addApiStatusDataToStationsInfoCollection(apiStatusData);
     let collectionStatusData = await StationInfo.find().lean(true);
     if (collectionStatusData.length <= 0) {
         const apiStatusData = await fetchedAPIData.stationStatus;
