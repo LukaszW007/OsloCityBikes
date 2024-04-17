@@ -76,7 +76,7 @@ setInterval(() => {
     const apiData = fetchedAPIData.stationInformation;
     updateStationsCollection(apiData);
     console.log("Data is fetching to update mongoDB");
-}, 30 * 60 * 1000);
+}, 1 * 60 * 1000);
 // fetching directly from service API
 app.get("/", (request, response) => {
     response.send("<h1>Oslo City Bikes server</h1>");
@@ -143,6 +143,7 @@ app.get("/api/stations_info", async (request, response) => {
         const apiStatusData = await fetchedAPIData.stationStatus;
         await addApiStatusDataToStationsInfoCollection(apiStatusData);
         collectionStatusData = await StationInfo.find().lean(true);
+        console.log("Added new info about stations to DB");
     }
     response.json(collectionStatusData);
 });
