@@ -72,10 +72,10 @@ export const addApiStatusDataToStationsInfoCollection = async (
 	stationsStatusFromAPI: any[]
 ) => {
 	if (!stationsStatusFromAPI) {
-		console.log(
-			"stationsStatusFromAPI has no data: ",
-			stationsStatusFromAPI
-		);
+		// console.log(
+		// 	"stationsStatusFromAPI has no data: ",
+		// 	stationsStatusFromAPI
+		// );
 	}
 	for (const station of stationsStatusFromAPI) {
 		const collectionStationData = await Station.find({
@@ -161,7 +161,7 @@ export const updateStationsCollection = async (
 
 export const deleteAllInCollection = async () => {
 	const collectionData = await StationInfo.deleteMany({});
-	console.log("collectionData ", collectionData);
+	// console.log("collectionData ", collectionData);
 };
 
 export const Station = mongoose.model("Station", stationSchema);

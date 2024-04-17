@@ -88,15 +88,15 @@ let url = process.env.MONGODB_URI as string;
 if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
 	url = process.env.MONGODB_URI_DEV as string;
 }
-mongoose.set("strictQuery", false);
-(async () => {
-	try {
-		await mongoose.connect(url);
-		console.log("connected to MongoDB");
-	} catch (error: any) {
-		console.log("error connecting to MongoDB:", error.message);
-	}
-})();
+// mongoose.set("strictQuery", false);
+// (async () => {
+// 	try {
+// 		await mongoose.connect(url);
+// 		console.log("connected to MongoDB");
+// 	} catch (error: any) {
+// 		console.log("error connecting to MongoDB:", error.message);
+// 	}
+// })();
 // mongoose
 // 	.connect(url)
 // 	.then((result) => {
@@ -124,7 +124,7 @@ app.use(requestLogger);
 app.use(express.json());
 app.use(errorHandler);
 // const PORT = process.env.PORT || 3001;
-
+console.log("RUN APP AGAIN");
 const dataFetching = async (): Promise<any> => {
 	let fetchedData: FetchedAPIData = {
 		stationInformation: null,
@@ -138,10 +138,10 @@ const dataFetching = async (): Promise<any> => {
 	).then((data: any) => {
 		// console.log('data',data);
 		if (data) {
-			console.info(
-				"Stations information data is fetched",
-				data.headers.date
-			);
+			// console.info(
+			// 	"Stations information data is fetched",
+			// 	data.headers.date
+			// );
 			fetchedData.stationInformation = data.data.data.stations;
 			fetchedData.stationInformationState = {
 				last_updated: data.data.last_updated,
@@ -158,7 +158,7 @@ const dataFetching = async (): Promise<any> => {
 	).then((data: any) => {
 		// console.log('data',data);
 		if (data) {
-			console.info("Stations status data is fetched", data.headers.date);
+			// console.info("Stations status data is fetched", data.headers.date);
 			fetchedData.stationStatus = data.data.data.stations;
 			fetchedData.stationStatusState = {
 				last_updated: data.data.last_updated,
@@ -183,8 +183,8 @@ setInterval(() => {
 setInterval(async () => {
 	// await dataFetching();
 	const apiStatusData = fetchedAPIData.stationStatus;
-	console.log("apiStatusData type", typeof apiStatusData);
-	console.log("apiStatusData length ", apiStatusData);
+	// console.log("apiStatusData type", typeof apiStatusData);
+	// console.log("apiStatusData length ", apiStatusData);
 	addApiStatusDataToStationsInfoCollection(apiStatusData!);
 	const apiData = fetchedAPIData.stationInformation;
 	updateStationsCollection(apiData!);

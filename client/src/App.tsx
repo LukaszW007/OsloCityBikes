@@ -110,7 +110,7 @@ function App(props: any) {
 	useEffect(() => {
 		interval.current = setInterval(() => {
 			dataStatesFetching();
-		}, 60 * 1000); // fetching data every 5min to update the table
+		}, 5 * 60 * 1000); // fetching data every 5min to update the table
 
 		return () => {
 			clearInterval(interval.current);
