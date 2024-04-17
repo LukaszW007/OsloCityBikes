@@ -80,8 +80,8 @@ setInterval(() => {
 }, 60 * 1000);
 //////
 //Data fetching from API to update mongoDB
-setInterval(() => {
-    dataFetching();
+setInterval(async () => {
+    await dataFetching();
     const apiStatusData = fetchedAPIData.stationStatus;
     addApiStatusDataToStationsInfoCollection(apiStatusData);
     const apiData = fetchedAPIData.stationInformation;
