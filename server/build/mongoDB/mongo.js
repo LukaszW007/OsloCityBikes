@@ -7,11 +7,11 @@ import mongoose from "mongoose";
 // 	process.exit(1);
 // }
 const password = process.argv[2];
-// let url = process.env.MONGODB_URI as string;
-// if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
-// 	url = process.env.MONGODB_URI_DEV as string;
-// }
-// mongoose.set("strictQuery", false);
+let url = process.env.MONGODB_URI;
+if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
+    url = process.env.MONGODB_URI_DEV;
+}
+mongoose.set("strictQuery", false);
 // mongoose
 // 	.connect(url)
 // 	.then((result) => {
@@ -20,6 +20,15 @@ const password = process.argv[2];
 // 	.catch((error) => {
 // 		console.log("error connecting to MongoDB:", error.message);
 // 	});
+(async () => {
+    try {
+        await mongoose.connect(url);
+        console.log("connected to MongoDB");
+    }
+    catch (error) {
+        console.log("error connecting to MongoDB:", error.message);
+    }
+})();
 // Station schema
 export const stationSchema = new mongoose.Schema({
     name: { type: String, required: true },
@@ -51,6 +60,9 @@ export const stationStatus = new mongoose.Schema({
     timeStamp: { type: Date, required: true },
 });
 export const addApiStatusDataToStationsInfoCollection = async (stationsStatusFromAPI) => {
+    if (!stationsStatusFromAPI) {
+        console.log("stationsStatusFromAPI has no data: ", stationsStatusFromAPI);
+    }
     for (const station of stationsStatusFromAPI) {
         const collectionStationData = await Station.find({
             station_id: station.station_id,
