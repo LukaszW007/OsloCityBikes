@@ -81,8 +81,10 @@ setInterval(() => {
 //////
 //Data fetching from API to update mongoDB
 setInterval(async () => {
-    await dataFetching();
+    // await dataFetching();
     const apiStatusData = fetchedAPIData.stationStatus;
+    console.log("apiStatusData type", typeof apiStatusData);
+    console.log("apiStatusData length ", apiStatusData?.length);
     addApiStatusDataToStationsInfoCollection(apiStatusData);
     const apiData = fetchedAPIData.stationInformation;
     updateStationsCollection(apiData);
