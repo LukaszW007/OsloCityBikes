@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import APIConnector from "./connectors/axiosConnector.js";
 import {
@@ -83,13 +83,21 @@ export interface StationStatusState {
 const app = express();
 
 //MongoDB
-// const password = process.argv[2];
+let url = process.env.MONGODB_URI as string;
 
-// const url = `mongodb+srv://wisznu07:${password}@cluster0.wzqvkl2.mongodb.net/?retryWrites=true&w=majority`;
-
-// mongoose.set("strictQuery", false);
-// mongoose.connect(url);
-// const Station = mongoose.model("Station", stationSchema);
+if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
+	url = process.env.MONGODB_URI_DEV as string;
+}
+mongoose.set("strictQuery", false);
+mongoose
+	.connect(url)
+	.then((result) => {
+		console.log("connected to MongoDB");
+	})
+	.catch((error) => {
+		console.log("error connecting to MongoDB:", error.message);
+	});
+///////////////
 
 let originUrl: string = "https://oslo-city-bikes.vercel.app";
 
@@ -106,6 +114,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(requestLogger);
 app.use(express.json());
+app.use(errorHandler);
 // const PORT = process.env.PORT || 3001;
 
 const dataFetching = async (): Promise<any> => {
@@ -182,7 +191,12 @@ app.get("/api/station_information", (request, response) => {
 });
 
 app.get("/api/station_information_state", (request, response) => {
-	response.json(fetchedAPIData.stationInformationState);
+	try {
+		response.json(fetchedAPIData.stationInformationState);
+	} catch (err) {
+		console.error(err);
+		response.json({ success: false });
+	}
 });
 
 app.get("/api/station_information/:id", (request, response) => {
@@ -208,7 +222,12 @@ app.get("/api/station_status", (request, response) => {
 });
 
 app.get("/api/station_status_state", (request, response) => {
-	response.json(fetchedAPIData.stationStatusState);
+	try {
+		response.json(fetchedAPIData.stationStatusState);
+	} catch (err) {
+		console.error(err);
+		response.json({ success: false });
+	}
 });
 
 app.get("/api/station_status/:id", (request, response) => {
