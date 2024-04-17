@@ -13,14 +13,23 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
     url = process.env.MONGODB_URI_DEV;
 }
 mongoose.set("strictQuery", false);
-mongoose
-    .connect(url)
-    .then((result) => {
-    console.log("connected to MongoDB");
-})
-    .catch((error) => {
-    console.log("error connecting to MongoDB:", error.message);
-});
+(async () => {
+    try {
+        await mongoose.connect(url);
+        console.log("connected to MongoDB");
+    }
+    catch (error) {
+        console.log("error connecting to MongoDB:", error.message);
+    }
+})();
+// mongoose
+// 	.connect(url)
+// 	.then((result) => {
+// 		console.log("connected to MongoDB");
+// 	})
+// 	.catch((error) => {
+// 		console.log("error connecting to MongoDB:", error.message);
+// 	});
 ///////////////
 let originUrl = "https://oslo-city-bikes.vercel.app";
 if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
