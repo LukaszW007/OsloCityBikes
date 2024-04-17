@@ -5,7 +5,7 @@ import APIConnector from "./connectors/axiosConnector.js";
 import { requestLogger, unknownEndpoint, } from "./utils/middleware.js";
 import cors from "cors";
 import { Station, StationInfo, addApiStatusDataToStationsInfoCollection, deleteAllInCollection, updateStationsCollection, } from "./mongoDB/mongo.js";
-export const app = express();
+const app = express();
 //MongoDB
 // const password = process.argv[2];
 // const url = `mongodb+srv://wisznu07:${password}@cluster0.wzqvkl2.mongodb.net/?retryWrites=true&w=majority`;
@@ -175,3 +175,4 @@ const PORT = process.env.PORT;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
+export default app;

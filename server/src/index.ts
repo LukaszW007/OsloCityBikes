@@ -80,7 +80,7 @@ export interface StationStatusState {
 	// },
 }
 
-export const app = express();
+const app = express();
 
 //MongoDB
 // const password = process.argv[2];
@@ -282,3 +282,5 @@ const PORT = process.env.PORT;
 app.listen(PORT, () => {
 	console.log(`Server running on port ${PORT}`);
 });
+
+export default app;
