@@ -84,7 +84,7 @@ setInterval(async () => {
     // await dataFetching();
     const apiStatusData = fetchedAPIData.stationStatus;
     console.log("apiStatusData type", typeof apiStatusData);
-    console.log("apiStatusData length ", apiStatusData?.length);
+    console.log("apiStatusData length ", apiStatusData);
     addApiStatusDataToStationsInfoCollection(apiStatusData);
     const apiData = fetchedAPIData.stationInformation;
     updateStationsCollection(apiData);
