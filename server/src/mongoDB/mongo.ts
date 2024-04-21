@@ -104,7 +104,7 @@ export const addApiStatusDataToStationsInfoCollection = async (
 export const addApiDataToStationsCollection = (
 	stationsFromAPI: StationInformation[]
 ) => {
-	stationsFromAPI.map((station: StationInformation) => {
+	stationsFromAPI.map(async (station: StationInformation) => {
 		const stationItem = new Station({
 			station_id: station.station_id,
 			address: station.address,
@@ -125,7 +125,7 @@ export const addApiDataToStationsCollection = (
 			dateOfLastUpdate: new Date(),
 		});
 
-		stationItem.save().then((savedStation) => {
+		await stationItem.save().then((savedStation) => {
 			// response.json(savedStation)
 			console.log("station saved!");
 		});

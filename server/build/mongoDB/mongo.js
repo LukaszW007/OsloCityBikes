@@ -89,7 +89,7 @@ export const addApiStatusDataToStationsInfoCollection = async (stationsStatusFro
     console.log("Saving is done");
 };
 export const addApiDataToStationsCollection = (stationsFromAPI) => {
-    stationsFromAPI.map((station) => {
+    stationsFromAPI.map(async (station) => {
         const stationItem = new Station({
             station_id: station.station_id,
             address: station.address,
@@ -109,7 +109,7 @@ export const addApiDataToStationsCollection = (stationsFromAPI) => {
             },
             dateOfLastUpdate: new Date(),
         });
-        stationItem.save().then((savedStation) => {
+        await stationItem.save().then((savedStation) => {
             // response.json(savedStation)
             console.log("station saved!");
         });
