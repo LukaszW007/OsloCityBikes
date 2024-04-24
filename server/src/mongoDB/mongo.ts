@@ -72,12 +72,14 @@ export const addApiStatusDataToStationsInfoCollection = async (
 	stationsStatusFromAPI: any[]
 ) => {
 	if (!stationsStatusFromAPI) {
-		// console.log(
-		// 	"stationsStatusFromAPI has no data: ",
-		// 	stationsStatusFromAPI
-		// );
+		console.log(
+			"stationsStatusFromAPI has no data: ",
+			stationsStatusFromAPI
+		);
 	}
+	const documents = [];
 	for (const station of stationsStatusFromAPI) {
+		//check does the station even exists in mongoDb collection of stations
 		const collectionStationData = await Station.find({
 			station_id: station.station_id,
 		}).lean(true);
@@ -92,10 +94,12 @@ export const addApiStatusDataToStationsInfoCollection = async (
 				timeStamp: new Date(),
 			});
 
-			stationItem.save().then((savedStation) => {
-				// response.json(savedStation)
-				console.log("station status saved!");
-			});
+			documents.push(stationItem);
+			await Station.insertMany(documents);
+			// stationItem.save().then((savedStation) => {
+			// 	// response.json(savedStation)
+			// 	console.log("station status saved!");
+			// });
 		}
 	}
 	console.log("Saving is done");
