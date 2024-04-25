@@ -95,14 +95,15 @@ export const addApiStatusDataToStationsInfoCollection = async (
 			});
 
 			documents.push(stationItem);
-			await Station.insertMany(documents);
+
 			// stationItem.save().then((savedStation) => {
 			// 	// response.json(savedStation)
 			// 	console.log("station status saved!");
 			// });
 		}
 	}
-	console.log("Saving is done");
+	await StationInfo.insertMany(documents);
+	console.log("Saving to mongoDB is done");
 };
 
 export const addApiDataToStationsCollection = (
