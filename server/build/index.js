@@ -92,9 +92,18 @@ setInterval(() => {
 //////
 //Data fetching from API to update mongoDB
 setInterval(async () => {
-    const apiStatusData = fetchedAPIData.stationStatus;
+    let apiStatusData = null;
+    while (apiStatusData === null) {
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        apiStatusData = fetchedAPIData.stationStatus;
+    }
     await addApiStatusDataToStationsInfoCollection(apiStatusData);
-    const apiData = fetchedAPIData.stationInformation;
+    let apiData = null;
+    while (apiData === null) {
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        apiData = fetchedAPIData.stationInformation;
+    }
+    // const apiData = fetchedAPIData.stationInformation;
     await updateStationsCollection(apiData);
     console.log("Data is fetching to update mongoDB");
 }, 60 * 1000);

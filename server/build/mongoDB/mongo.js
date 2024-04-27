@@ -60,8 +60,9 @@ export const stationStatus = new mongoose.Schema({
     timeStamp: { type: Date, required: true },
 });
 export const addApiStatusDataToStationsInfoCollection = async (stationsStatusFromAPI) => {
-    if (!stationsStatusFromAPI) {
+    if (!stationsStatusFromAPI || stationsStatusFromAPI.length <= 0) {
         console.log("stationsStatusFromAPI has no data: ", stationsStatusFromAPI);
+        return;
     }
     const documents = [];
     for (const station of stationsStatusFromAPI) {
