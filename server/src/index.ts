@@ -182,11 +182,11 @@ setInterval(() => {
 //Data fetching from API to update mongoDB
 setInterval(async () => {
 	const apiStatusData = fetchedAPIData.stationStatus;
-	addApiStatusDataToStationsInfoCollection(apiStatusData!);
+	await addApiStatusDataToStationsInfoCollection(apiStatusData!);
 	const apiData = fetchedAPIData.stationInformation;
-	updateStationsCollection(apiData!);
+	await updateStationsCollection(apiData!);
 	console.log("Data is fetching to update mongoDB");
-}, 30 * 60 * 1000);
+}, 60 * 1000);
 
 // fetching directly from service API
 app.get("/", (request, response) => {
@@ -271,12 +271,12 @@ app.get("/api/stations", async (request, response) => {
 
 app.get("/api/stations_info", async (request, response) => {
 	let collectionStatusData = await StationInfo.find().lean(true);
-	if (collectionStatusData.length <= 0) {
-		const apiStatusData = await fetchedAPIData.stationStatus;
-		await addApiStatusDataToStationsInfoCollection(apiStatusData!);
-		collectionStatusData = await StationInfo.find().lean(true);
-		console.log("Added new info about stations to DB");
-	}
+	// if (collectionStatusData.length <= 0) {
+	// 	const apiStatusData = await fetchedAPIData.stationStatus;
+	// 	await addApiStatusDataToStationsInfoCollection(apiStatusData!);
+	// 	collectionStatusData = await StationInfo.find().lean(true);
+	// 	console.log("Added new info about stations to DB");
+	// }
 	response.json(collectionStatusData);
 });
 app.get("/api/delete_all_stations_info", async (request, response) => {

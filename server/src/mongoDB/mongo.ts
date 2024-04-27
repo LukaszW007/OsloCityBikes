@@ -103,7 +103,7 @@ export const addApiStatusDataToStationsInfoCollection = async (
 		}
 	}
 	await StationInfo.insertMany(documents);
-	console.log("Saving to mongoDB is done");
+	console.log("Saving to mongoDB is done", documents.length);
 };
 
 export const addApiDataToStationsCollection = (

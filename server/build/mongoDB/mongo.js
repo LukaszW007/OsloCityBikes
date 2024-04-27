@@ -87,7 +87,7 @@ export const addApiStatusDataToStationsInfoCollection = async (stationsStatusFro
         }
     }
     await StationInfo.insertMany(documents);
-    console.log("Saving to mongoDB is done");
+    console.log("Saving to mongoDB is done", documents.length);
 };
 export const addApiDataToStationsCollection = (stationsFromAPI) => {
     stationsFromAPI.map(async (station) => {
