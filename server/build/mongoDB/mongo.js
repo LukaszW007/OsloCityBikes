@@ -20,15 +20,31 @@ mongoose.set("strictQuery", false);
 // 	.catch((error) => {
 // 		console.log("error connecting to MongoDB:", error.message);
 // 	});
-(async () => {
+const options = {
+    serverSelectionTimeoutMS: 15000, // Increase the timeout to 15 seconds
+};
+const connect = async () => {
     try {
-        await mongoose.connect(url);
+        await mongoose.connect(url, options);
         console.log("connected to MongoDB");
     }
     catch (error) {
         console.log("error connecting to MongoDB:", error.message);
     }
-})();
+};
+// Disconnect from MongoDB Atlas
+process.on("SIGINT", () => {
+    mongoose
+        .disconnect()
+        .then(() => {
+        console.log("Disconnected from MongoDB Atlas");
+        process.exit(0);
+    })
+        .catch((error) => {
+        console.error("Error disconnecting from MongoDB Atlas", error);
+        process.exit(1);
+    });
+});
 // Station schema
 export const stationSchema = new mongoose.Schema({
     name: { type: String, required: true },
@@ -87,6 +103,7 @@ export const addApiStatusDataToStationsInfoCollection = async (stationsStatusFro
             // });
         }
     }
+    await connect();
     await StationInfo.insertMany(documents);
     console.log("Saving to mongoDB is done", documents.length);
 };
@@ -111,6 +128,7 @@ export const addApiDataToStationsCollection = (stationsFromAPI) => {
             },
             dateOfLastUpdate: new Date(),
         });
+        await connect();
         await stationItem.save().then((savedStation) => {
             // response.json(savedStation)
             console.log("station saved!");
