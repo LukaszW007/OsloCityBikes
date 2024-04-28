@@ -80,6 +80,7 @@ export const addApiStatusDataToStationsInfoCollection = async (stationsStatusFro
         console.log("stationsStatusFromAPI has no data: ", stationsStatusFromAPI);
         return;
     }
+    await connect();
     const documents = [];
     for (const station of stationsStatusFromAPI) {
         //check does the station even exists in mongoDb collection of stations
@@ -103,11 +104,11 @@ export const addApiStatusDataToStationsInfoCollection = async (stationsStatusFro
             // });
         }
     }
-    await connect();
     await StationInfo.insertMany(documents);
     console.log("Saving to mongoDB is done", documents.length);
 };
-export const addApiDataToStationsCollection = (stationsFromAPI) => {
+export const addApiDataToStationsCollection = async (stationsFromAPI) => {
+    await connect();
     stationsFromAPI.map(async (station) => {
         const stationItem = new Station({
             station_id: station.station_id,
@@ -128,7 +129,6 @@ export const addApiDataToStationsCollection = (stationsFromAPI) => {
             },
             dateOfLastUpdate: new Date(),
         });
-        await connect();
         await stationItem.save().then((savedStation) => {
             // response.json(savedStation)
             console.log("station saved!");
