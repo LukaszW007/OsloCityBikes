@@ -40,21 +40,6 @@ const connect = async () => {
 	}
 };
 
-// Disconnect from MongoDB Atlas
-// process.on("SIGINT", () => {
-const disconnect = async () => {
-	await mongoose
-		.disconnect()
-		.then(() => {
-			console.log("Disconnected from MongoDB Atlas");
-			process.exit(0);
-		})
-		.catch((error) => {
-			console.error("Error disconnecting from MongoDB Atlas", error);
-			process.exit(1);
-		});
-};
-
 // Station schema
 export const stationSchema = new mongoose.Schema({
 	name: { type: String, required: true },
@@ -97,6 +82,7 @@ export const addApiStatusDataToStationsInfoCollection = async (
 		);
 		return;
 	}
+	console.log("addApiStatusDataToStationsInfoCollection");
 	await connect();
 	const documents = [];
 	for (const station of stationsStatusFromAPI) {
@@ -126,7 +112,7 @@ export const addApiStatusDataToStationsInfoCollection = async (
 
 	await StationInfo.insertMany(documents);
 	console.log("Saving to mongoDB is done", documents.length);
-	await disconnect();
+	// await disconnect();
 };
 
 export const addApiDataToStationsCollection = async (
@@ -159,7 +145,8 @@ export const addApiDataToStationsCollection = async (
 			console.log("station saved!");
 		});
 	});
-	await disconnect();
+	console.log("stations list is up to date!");
+	// await disconnect();
 };
 
 export const updateStationsCollection = async (
@@ -196,6 +183,21 @@ export const deleteAllInCollection = async () => {
 
 export const Station = mongoose.model("Station", stationSchema);
 export const StationInfo = mongoose.model("stations_status", stationStatus);
+
+// Disconnect from MongoDB Atlas
+// process.on("SIGINT", () => {
+const disconnect = async () => {
+	await mongoose.disconnect();
+	// .then(() => {
+	// 	console.log("Disconnected from MongoDB Atlas");
+	// 	process.exit(0);
+	// })
+	// .catch((error) => {
+	// 	console.error("Error disconnecting from MongoDB Atlas", error);
+	// 	process.exit(1);
+	// });
+};
+
 // export const StationInfo = mongoose.model("StationInfo", stationStatus);
 
 // Station.find({}).then((result) => {

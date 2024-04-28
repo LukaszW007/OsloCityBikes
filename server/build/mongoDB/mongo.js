@@ -32,20 +32,6 @@ const connect = async () => {
         console.log("error connecting to MongoDB:", error.message);
     }
 };
-// Disconnect from MongoDB Atlas
-// process.on("SIGINT", () => {
-const disconnect = async () => {
-    await mongoose
-        .disconnect()
-        .then(() => {
-        console.log("Disconnected from MongoDB Atlas");
-        process.exit(0);
-    })
-        .catch((error) => {
-        console.error("Error disconnecting from MongoDB Atlas", error);
-        process.exit(1);
-    });
-};
 // Station schema
 export const stationSchema = new mongoose.Schema({
     name: { type: String, required: true },
@@ -81,6 +67,7 @@ export const addApiStatusDataToStationsInfoCollection = async (stationsStatusFro
         console.log("stationsStatusFromAPI has no data: ", stationsStatusFromAPI);
         return;
     }
+    console.log("addApiStatusDataToStationsInfoCollection");
     await connect();
     const documents = [];
     for (const station of stationsStatusFromAPI) {
@@ -107,7 +94,7 @@ export const addApiStatusDataToStationsInfoCollection = async (stationsStatusFro
     }
     await StationInfo.insertMany(documents);
     console.log("Saving to mongoDB is done", documents.length);
-    await disconnect();
+    // await disconnect();
 };
 export const addApiDataToStationsCollection = async (stationsFromAPI) => {
     await connect();
@@ -136,7 +123,8 @@ export const addApiDataToStationsCollection = async (stationsFromAPI) => {
             console.log("station saved!");
         });
     });
-    await disconnect();
+    console.log("stations list is up to date!");
+    // await disconnect();
 };
 export const updateStationsCollection = async (apiData) => {
     const collectionData = await Station.find().lean(true);
@@ -165,6 +153,19 @@ export const deleteAllInCollection = async () => {
 };
 export const Station = mongoose.model("Station", stationSchema);
 export const StationInfo = mongoose.model("stations_status", stationStatus);
+// Disconnect from MongoDB Atlas
+// process.on("SIGINT", () => {
+const disconnect = async () => {
+    await mongoose.disconnect();
+    // .then(() => {
+    // 	console.log("Disconnected from MongoDB Atlas");
+    // 	process.exit(0);
+    // })
+    // .catch((error) => {
+    // 	console.error("Error disconnecting from MongoDB Atlas", error);
+    // 	process.exit(1);
+    // });
+};
 // export const StationInfo = mongoose.model("StationInfo", stationStatus);
 // Station.find({}).then((result) => {
 // 	result.forEach((note) => {
