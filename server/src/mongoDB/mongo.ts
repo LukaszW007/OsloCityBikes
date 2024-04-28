@@ -28,7 +28,7 @@ mongoose.set("strictQuery", false);
 // 	});
 
 const options = {
-	serverSelectionTimeoutMS: 15000, // Increase the timeout to 15 seconds
+	serverSelectionTimeoutMS: 25000, // Increase the timeout to 15 seconds
 };
 
 const connect = async () => {
@@ -41,18 +41,18 @@ const connect = async () => {
 };
 
 // Disconnect from MongoDB Atlas
-process.on("SIGINT", () => {
-	mongoose
-		.disconnect()
-		.then(() => {
-			console.log("Disconnected from MongoDB Atlas");
-			process.exit(0);
-		})
-		.catch((error) => {
-			console.error("Error disconnecting from MongoDB Atlas", error);
-			process.exit(1);
-		});
-});
+// process.on("SIGINT", () => {
+// 	mongoose
+// 		.disconnect()
+// 		.then(() => {
+// 			console.log("Disconnected from MongoDB Atlas");
+// 			process.exit(0);
+// 		})
+// 		.catch((error) => {
+// 			console.error("Error disconnecting from MongoDB Atlas", error);
+// 			process.exit(1);
+// 		});
+// });
 
 // Station schema
 export const stationSchema = new mongoose.Schema({
