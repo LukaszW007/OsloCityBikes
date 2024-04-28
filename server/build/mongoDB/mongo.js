@@ -34,17 +34,18 @@ const connect = async () => {
 };
 // Disconnect from MongoDB Atlas
 // process.on("SIGINT", () => {
-// 	mongoose
-// 		.disconnect()
-// 		.then(() => {
-// 			console.log("Disconnected from MongoDB Atlas");
-// 			process.exit(0);
-// 		})
-// 		.catch((error) => {
-// 			console.error("Error disconnecting from MongoDB Atlas", error);
-// 			process.exit(1);
-// 		});
-// });
+const disconnect = async () => {
+    await mongoose
+        .disconnect()
+        .then(() => {
+        console.log("Disconnected from MongoDB Atlas");
+        process.exit(0);
+    })
+        .catch((error) => {
+        console.error("Error disconnecting from MongoDB Atlas", error);
+        process.exit(1);
+    });
+};
 // Station schema
 export const stationSchema = new mongoose.Schema({
     name: { type: String, required: true },
@@ -106,6 +107,7 @@ export const addApiStatusDataToStationsInfoCollection = async (stationsStatusFro
     }
     await StationInfo.insertMany(documents);
     console.log("Saving to mongoDB is done", documents.length);
+    await disconnect();
 };
 export const addApiDataToStationsCollection = async (stationsFromAPI) => {
     await connect();
@@ -134,6 +136,7 @@ export const addApiDataToStationsCollection = async (stationsFromAPI) => {
             console.log("station saved!");
         });
     });
+    await disconnect();
 };
 export const updateStationsCollection = async (apiData) => {
     const collectionData = await Station.find().lean(true);
