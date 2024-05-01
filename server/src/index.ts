@@ -174,28 +174,28 @@ const fetchedAPIData: FetchedAPIData = await dataFetching();
 
 //////
 //Data fetching from API to update the map
-setInterval(() => {
-	dataFetching();
-	console.log("Data is fetching");
-}, 60 * 1000);
-//////
-//Data fetching from API to update mongoDB
-setInterval(async () => {
-	let apiStatusData = null;
-	while (apiStatusData === null) {
-		await new Promise((resolve) => setTimeout(resolve, 500));
-		apiStatusData = fetchedAPIData.stationStatus;
-	}
-	await addApiStatusDataToStationsInfoCollection(apiStatusData!);
-	let apiData = null;
-	while (apiData === null) {
-		await new Promise((resolve) => setTimeout(resolve, 500));
-		apiData = fetchedAPIData.stationInformation;
-	}
-	// const apiData = fetchedAPIData.stationInformation;
-	await updateStationsCollection(apiData!);
-	console.log("Data is fetching to update mongoDB");
-}, 60 * 1000);
+// setInterval(() => {
+// 	dataFetching();
+// 	console.log("Data is fetching");
+// }, 60 * 1000);
+// //////
+// //Data fetching from API to update mongoDB
+// setInterval(async () => {
+// 	let apiStatusData = null;
+// 	while (apiStatusData === null) {
+// 		await new Promise((resolve) => setTimeout(resolve, 500));
+// 		apiStatusData = fetchedAPIData.stationStatus;
+// 	}
+// 	await addApiStatusDataToStationsInfoCollection(apiStatusData!);
+// 	let apiData = null;
+// 	while (apiData === null) {
+// 		await new Promise((resolve) => setTimeout(resolve, 500));
+// 		apiData = fetchedAPIData.stationInformation;
+// 	}
+// 	// const apiData = fetchedAPIData.stationInformation;
+// 	await updateStationsCollection(apiData!);
+// 	console.log("Data is fetching to update mongoDB");
+// }, 60 * 1000);
 
 // fetching directly from service API
 app.get("/", (request, response) => {
