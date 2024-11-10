@@ -1,6 +1,6 @@
 import axios from "axios";
 export default class APIConnector {
-    static getJson(url, args) {
+    static async getJson(url, args) {
         return axios
             .get(url, {
             // params: args,
