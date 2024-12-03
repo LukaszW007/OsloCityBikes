@@ -21,7 +21,7 @@ mongoose.set("strictQuery", false);
 // 		console.log("error connecting to MongoDB:", error.message);
 // 	});
 const options = {
-    serverSelectionTimeoutMS: 25000, // Increase the timeout to 15 seconds
+    serverSelectionTimeoutMS: 25000, // Increase the timeout to 25 seconds
 };
 const connect = async () => {
     try {

@@ -28,7 +28,7 @@ mongoose.set("strictQuery", false);
 // 	});
 
 const options = {
-	serverSelectionTimeoutMS: 25000, // Increase the timeout to 15 seconds
+	serverSelectionTimeoutMS: 25000, // Increase the timeout to 25 seconds
 };
 
 const connect = async () => {

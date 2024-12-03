@@ -5,6 +5,7 @@ import router from "./routes.js";
 import APIConnector from "./connectors/axiosConnector.js";
 import { requestLogger, unknownEndpoint, errorHandler, } from "./utils/middleware.js";
 import cors from "cors";
+import { addApiStatusDataToStationsInfoCollection, updateStationsCollection, } from "./mongoDB/mongo.js";
 const app = express();
 //MongoDB
 let url = process.env.MONGODB_URI;
@@ -92,23 +93,25 @@ setInterval(() => {
     console.log("Data is fetching");
 }, 60 * 1000);
 // //////
-// //Data fetching from API to update mongoDB
-// setInterval(async () => {
-// 	let apiStatusData = null;
-// 	while (apiStatusData === null) {
-// 		await new Promise((resolve) => setTimeout(resolve, 500));
-// 		apiStatusData = fetchedAPIData.stationStatus;
-// 	}
-// 	await addApiStatusDataToStationsInfoCollection(apiStatusData!);
-// 	let apiData = null;
-// 	while (apiData === null) {
-// 		await new Promise((resolve) => setTimeout(resolve, 500));
-// 		apiData = fetchedAPIData.stationInformation;
-// 	}
-// 	// const apiData = fetchedAPIData.stationInformation;
-// 	await updateStationsCollection(apiData!);
-// 	console.log("Data is fetching to update mongoDB");
-// }, 60 * 1000);
+//Data fetching from API to update mongoDB
+setInterval(async () => {
+    let apiStatusData = null;
+    while (apiStatusData === null) {
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        apiStatusData = fetchedAPIData.stationStatus;
+        console.log("status added to mongoDB");
+    }
+    await addApiStatusDataToStationsInfoCollection(apiStatusData);
+    let apiData = null;
+    while (apiData === null) {
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        apiData = fetchedAPIData.stationInformation;
+        console.log("stations added to mongoDB");
+    }
+    // const apiData = fetchedAPIData.stationInformation;
+    await updateStationsCollection(apiData);
+    console.log("Data is fetching to update mongoDB");
+}, 60 * 1000);
 // fetching directly from service API
 // app.get("/", (request, response) => {
 // 	response.send("<h1>Oslo City Bikes server</h1>");
@@ -166,51 +169,6 @@ setInterval(() => {
 // 	} else {
 // 		response.status(404).end();
 // 	}
-// });
-////////////////////
-//fething from Mongo
-////////////////////
-// app.get("/api/stations", async (request, response) => {
-// 	let collectionData = await Station.find().lean(true);
-// 	if (collectionData.length <= 0) {
-// 		const apiData = await fetchedAPIData.stationInformation;
-// 		await updateStationsCollection(apiData!);
-// 		collectionData = await Station.find().lean(true);
-// 	}
-// 	response.json(collectionData);
-// });
-// app.get("/api/stations_info", async (request, response) => {
-// 	let collectionStatusData = await StationInfo.find().lean(true);
-// 	// if (collectionStatusData.length <= 0) {
-// 	// 	const apiStatusData = await fetchedAPIData.stationStatus;
-// 	// 	await addApiStatusDataToStationsInfoCollection(apiStatusData!);
-// 	// 	collectionStatusData = await StationInfo.find().lean(true);
-// 	// 	console.log("Added new info about stations to DB");
-// 	// }
-// 	response.json(collectionStatusData);
-// });
-// app.get("/api/delete_all_stations_info", async (request, response) => {
-// 	await deleteAllInCollection();
-// 	const collectionStatusData = await StationInfo.find().lean(true);
-// 	response.json(collectionStatusData);
-// });
-// app.get("/api/stations_info/:id", async (request, response) => {
-// 	const id = request.params.id;
-// 	StationInfo.find({
-// 		station_id: id,
-// 	})
-// 		.lean(true)
-// 		.then((station) => {
-// 			if (station.length > 0) {
-// 				response.json(station);
-// 			} else {
-// 				response.status(404).end();
-// 			}
-// 		})
-// 		.catch((error) => {
-// 			console.log(error);
-// 			response.status(500).end();
-// 		});
 // });
 app.use(unknownEndpoint);
 const PORT = process.env.PORT;
