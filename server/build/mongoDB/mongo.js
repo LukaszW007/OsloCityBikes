@@ -10,6 +10,7 @@ const password = process.argv[2];
 let url = process.env.MONGODB_URI;
 if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
     url = process.env.MONGODB_URI_DEV;
+    console.log("Connecting to DEVELOPMENT mongoDB");
 }
 mongoose.set("strictQuery", false);
 // mongoose
@@ -23,10 +24,36 @@ mongoose.set("strictQuery", false);
 const options = {
     serverSelectionTimeoutMS: 25000, // Increase the timeout to 25 seconds
 };
+////////////////////////////////////////
+const { MongoClient, ServerApiVersion } = require("mongodb");
+const uri = "mongodb+srv://<db_username>:<db_password>@cluster0.wzqvkl2.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+    serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
+    },
+});
+async function run() {
+    try {
+        // Connect the client to the server	(optional starting in v4.7)
+        await client.connect();
+        // Send a ping to confirm a successful connection
+        await client.db("admin").command({ ping: 1 });
+        console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    }
+    finally {
+        // Ensures that the client will close when you finish/error
+        await client.close();
+    }
+}
+run().catch(console.dir);
+////////////////////////////////////
 const connect = async () => {
     try {
         await mongoose.connect(url, options);
-        console.log("connected to MongoDB");
+        console.log("connected to MongoDB with url: ", url);
     }
     catch (error) {
         console.log("error connecting to MongoDB:", error.message);
@@ -123,7 +150,7 @@ export const addApiDataToStationsCollection = async (stationsFromAPI) => {
             console.log("station saved!");
         });
     });
-    console.log("stations list is up to date!");
+    console.log("stations list is updated!");
     // await disconnect();
 };
 export const updateStationsCollection = async (apiData) => {
@@ -146,6 +173,7 @@ export const updateStationsCollection = async (apiData) => {
     if (missingItemsArray.length > 0) {
         addApiDataToStationsCollection(missingItemsArray);
     }
+    console.log("stations list is up to date!");
 };
 export const deleteAllInCollection = async () => {
     const collectionData = await StationInfo.deleteMany({});
