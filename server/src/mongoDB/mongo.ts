@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import mongoose from "mongoose";
 import { StationInformation, StationStatus } from "../index.js";
+import { MongoClient, ServerApiVersion } from "mongodb";
 
 // if (process.argv.length < 3) {
 // 	console.log("give password as argument");
@@ -34,7 +35,6 @@ const options = {
 
 ////////////////////////////////////////
 
-const { MongoClient, ServerApiVersion } = require("mongodb");
 const uri =
 	"mongodb+srv://<db_username>:<db_password>@cluster0.wzqvkl2.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
