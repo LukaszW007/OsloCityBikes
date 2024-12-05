@@ -147,7 +147,7 @@ export const addApiStatusDataToStationsInfoCollection = async (
 
 	await StationInfo.insertMany(documents);
 	console.log("Saving to mongoDB is done", documents.length);
-	// await disconnect();
+	await disconnect();
 };
 
 export const addApiDataToStationsCollection = async (
@@ -181,7 +181,7 @@ export const addApiDataToStationsCollection = async (
 		});
 	});
 	console.log("stations list is updated!");
-	// await disconnect();
+	await disconnect();
 };
 
 export const updateStationsCollection = async (
