@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config();
+import cron from "node-cron";
 import express from "express";
 import router from "./routes.js";
 import APIConnector from "./connectors/axiosConnector.js";
@@ -43,7 +44,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(requestLogger);
 app.get("/favicon.ico", (req, res) => res.status(204));
-app.get("/", (req, res) => res.status(204));
+app.get("/", (req, res) => res.status(404));
 app.use("/api", router);
 app.use(express.json());
 app.use(errorHandler);
@@ -90,13 +91,10 @@ export const dataFetching = async () => {
 export const fetchedAPIData = await dataFetching();
 //////
 // Data fetching from API to update the map
-setInterval(() => {
-    dataFetching();
+cron.schedule("*/1 * * * *", async () => {
+    console.log("Starting data fetch...");
+    await dataFetching();
     console.log("Data is fetching");
-}, 60 * 1000);
-// //////
-//Data fetching from API to update mongoDB
-setInterval(async () => {
     let apiStatusData = null;
     while (apiStatusData === null) {
         await new Promise((resolve) => setTimeout(resolve, 500));
@@ -113,7 +111,31 @@ setInterval(async () => {
     // const apiData = fetchedAPIData.stationInformation;
     await updateStationsCollection(apiData);
     console.log("Data is fetching to update mongoDB");
-}, 60 * 1000);
+});
+// setInterval(() => {
+// 	dataFetching();
+// 	console.log("Data is fetching");
+// }, 60 * 1000);
+// // //////
+// //Data fetching from API to update mongoDB
+// setInterval(async () => {
+// 	let apiStatusData = null;
+// 	while (apiStatusData === null) {
+// 		await new Promise((resolve) => setTimeout(resolve, 500));
+// 		apiStatusData = fetchedAPIData.stationStatus;
+// 		console.log("status will be added to mongoDB");
+// 	}
+// 	await addApiStatusDataToStationsInfoCollection(apiStatusData!);
+// 	let apiData = null;
+// 	while (apiData === null) {
+// 		await new Promise((resolve) => setTimeout(resolve, 500));
+// 		apiData = fetchedAPIData.stationInformation;
+// 		console.log("stations will be added to mongoDB");
+// 	}
+// 	// const apiData = fetchedAPIData.stationInformation;
+// 	await updateStationsCollection(apiData!);
+// 	console.log("Data is fetching to update mongoDB");
+// }, 60 * 1000);
 // //fetching directly from service API
 // app.get("/", (request, response) => {
 // 	response.send("<h1>Oslo City Bikes server</h1>");
