@@ -14,7 +14,8 @@
 		{
 			"src": "/(.*)",
 			"status": 404,
-			"dest": "/404.html"
+			"headers": { "Content-Type": "text/plain" },
+			"dest": "/"
 		}
 	]
 }
