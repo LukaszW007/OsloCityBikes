@@ -188,14 +188,14 @@ setInterval(async () => {
 	while (apiStatusData === null) {
 		await new Promise((resolve) => setTimeout(resolve, 500));
 		apiStatusData = fetchedAPIData.stationStatus;
-		console.log("status added to mongoDB");
+		console.log("status will be added to mongoDB");
 	}
 	await addApiStatusDataToStationsInfoCollection(apiStatusData!);
 	let apiData = null;
 	while (apiData === null) {
 		await new Promise((resolve) => setTimeout(resolve, 500));
 		apiData = fetchedAPIData.stationInformation;
-		console.log("stations added to mongoDB");
+		console.log("stations will be added to mongoDB");
 	}
 	// const apiData = fetchedAPIData.stationInformation;
 	await updateStationsCollection(apiData!);
