@@ -10,12 +10,6 @@
 		{
 			"src": "/api/(.*)",
 			"dest": "build/index.js"
-		},
-		{
-			"src": "/(.*)",
-			"status": 404,
-			"headers": { "Content-Type": "text/plain" },
-			"dest": "/"
 		}
 	]
 }
