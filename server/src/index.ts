@@ -122,6 +122,8 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(requestLogger);
+app.get("/favicon.ico", (req, res) => res.status(204));
+app.get("/", (req, res) => res.status(204));
 app.use("/api", router);
 app.use(express.json());
 app.use(errorHandler);
@@ -202,7 +204,7 @@ setInterval(async () => {
 	console.log("Data is fetching to update mongoDB");
 }, 60 * 1000);
 
-// fetching directly from service API
+// //fetching directly from service API
 // app.get("/", (request, response) => {
 // 	response.send("<h1>Oslo City Bikes server</h1>");
 // });
