@@ -6,7 +6,8 @@ import router from "./routes.js";
 import APIConnector from "./connectors/axiosConnector.js";
 import { requestLogger, unknownEndpoint, errorHandler, } from "./utils/middleware.js";
 import cors from "cors";
-import { addApiStatusDataToStationsInfoCollection, updateStationsCollection, } from "./mongoDB/mongo.js";
+import { addApiStatusDataToStationsInfoCollection, } from "./mongoDB/mongo.js";
+import { updateStationsCollection } from "./mongoDB/fetch-data.js";
 const app = express();
 //MongoDB
 let url = process.env.MONGODB_URI;

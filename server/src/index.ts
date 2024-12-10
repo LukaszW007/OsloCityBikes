@@ -17,8 +17,8 @@ import {
 	addApiDataToStationsCollection,
 	addApiStatusDataToStationsInfoCollection,
 	deleteAllInCollection,
-	updateStationsCollection,
 } from "./mongoDB/mongo.js";
+import { updateStationsCollection } from "./mongoDB/fetch-data.js";
 
 export interface FetchedAPIData {
 	stationInformation: StationInformation[] | null;

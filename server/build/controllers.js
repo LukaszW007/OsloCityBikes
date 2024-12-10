@@ -1,5 +1,6 @@
 import { fetchedAPIData } from "./index.js";
-import { Station, StationInfo, deleteAllInCollection, updateStationsCollection, } from "./mongoDB/mongo.js";
+import { Station, StationInfo, deleteAllInCollection, } from "./mongoDB/mongo.js";
+import { updateStationsCollection } from "./mongoDB/fetch-data.js";
 // const fetchedAPIData: FetchedAPIData = await dataFetching();
 export const getStationInformation = async (request, response) => {
     // const fetchedAPIData: FetchedAPIData = await dataFetching();
