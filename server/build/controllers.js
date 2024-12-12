@@ -1,6 +1,5 @@
 import { fetchedAPIData } from "./index.js";
-import { Station, StationInfo, deleteAllInCollection, } from "./mongoDB/mongo.js";
-import { updateStationsCollection } from "./mongoDB/fetch-data.js";
+import { StationInfo, deleteAllInCollection, updateStationsCollection, } from "./mongoDB/mongo.js";
 // const fetchedAPIData: FetchedAPIData = await dataFetching();
 export const getStationInformation = async (request, response) => {
     // const fetchedAPIData: FetchedAPIData = await dataFetching();
@@ -67,15 +66,19 @@ export const getStationStatusById = async (request, response) => {
 ////////////////////
 //fething from Mongo
 ////////////////////
-export const getStations = async (request, response) => {
-    let collectionData = await Station.find().lean(true);
-    // const fetchedAPIData: FetchedAPIData = await dataFetching();
-    if (collectionData.length <= 0) {
-        const apiData = await fetchedAPIData.stationInformation;
-        await updateStationsCollection(apiData);
-        collectionData = await Station.find().lean(true);
-    }
-    response.json(collectionData);
+// export const getStations = async (request: Request, response: Response) => {
+// 	let collectionData = await Station.find().lean(true);
+// 	// const fetchedAPIData: FetchedAPIData = await dataFetching();
+// 	if (collectionData.length <= 0) {
+// 		const apiData = await fetchedAPIData.stationInformation;
+// 		await updateStationsCollection(apiData!);
+// 		collectionData = await Station.find().lean(true);
+// 	}
+// 	response.json(collectionData);
+// };
+export const updateMongo = async (request, response) => {
+    const apiData = await fetchedAPIData.stationInformation;
+    await updateStationsCollection(apiData);
 };
 export const getStationsInfo = async (request, response) => {
     let collectionStatusData = await StationInfo.find().lean(true);

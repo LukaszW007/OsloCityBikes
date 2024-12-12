@@ -1,38 +1,33 @@
-import { StationInformation } from "../index.js";
+import { dataFetching, FetchedAPIData, StationInformation } from "../index.js";
 import {
 	addApiDataToStationsCollection,
+	addApiStatusDataToStationsInfoCollection,
 	connect,
 	disconnect,
 	Station,
+	updateStationsCollection,
 } from "./mongo.js";
 
-export const updateStationsCollection = async (
-	apiData: StationInformation[]
-) => {
-	await connect();
-	const collectionData = await Station.find().lean(true);
-	const collectionDataCount = collectionData.length;
-	const missingItemsArray: StationInformation[] = [];
-	if (apiData?.length !== collectionDataCount) {
-		const missingItems = apiData!.filter((apiDataItem) => {
-			const checkedItem = collectionData!.filter(
-				(collectionDataItem) =>
-					collectionDataItem.station_id === apiDataItem.station_id
-			);
-			if (checkedItem.length > 0) {
-				return null;
-			} else {
-				return apiDataItem;
-			}
-		});
-		// console.log("missingItems ", missingItems);
-		missingItemsArray.push(...missingItems);
-	}
+// Data fetching from API to update the map
+export const updateMongoDB = async (fetchedAPIData: FetchedAPIData) => {
+	console.log("Starting data fetch...");
+	await dataFetching();
+	console.log("Data is fetching");
 
-	if (missingItemsArray.length > 0) {
-		addApiDataToStationsCollection(missingItemsArray);
-	} else {
-		console.log("stations list is up to date!");
-		await disconnect();
+	let apiStatusData = null;
+	while (apiStatusData === null) {
+		await new Promise((resolve) => setTimeout(resolve, 500));
+		apiStatusData = fetchedAPIData.stationStatus;
+		console.log("status will be added to mongoDB");
 	}
+	await addApiStatusDataToStationsInfoCollection(apiStatusData!);
+	let apiData = null;
+	while (apiData === null) {
+		await new Promise((resolve) => setTimeout(resolve, 500));
+		apiData = fetchedAPIData.stationInformation;
+		console.log("stations will be added to mongoDB");
+	}
+	// const apiData = fetchedAPIData.stationInformation;
+	await updateStationsCollection(apiData!);
+	console.log("Data is fetching to update mongoDB");
 };
