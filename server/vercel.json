@@ -4,18 +4,12 @@
 		{
 			"src": "build/index.js",
 			"use": "@vercel/node"
-		},
-		{ "src": "build/mongo/fetch-data.js", "use": "@vercel/node" }
+		}
 	],
 	"routes": [
 		{
-			"src": "/api/   (.*)",
+			"src": "/api/(.*)",
 			"dest": "build/index.js"
-		},
-		{
-			"src": "/api/stations",
-			"dest": "api/fetch-data.js",
-			"schedule": "@every 1m"
 		}
 	]
 }
