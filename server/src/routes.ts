@@ -6,7 +6,7 @@ import {
 	getStationStatus,
 	getStationStatusById,
 	getStationStatusState,
-	updateMongo,
+	getStations,
 	getStationsInfo,
 	getStationsInfoById,
 	deleteAllStationsInfo,
@@ -22,7 +22,7 @@ router.get("/station_status", getStationStatus);
 router.get("/station_status_state", getStationStatusState);
 router.get("/station_status/:id", getStationStatusById);
 //from MongoDB
-router.get("/stations", updateMongo);
+router.get("/stations", getStations);
 router.get("/stations_info", getStationsInfo);
 router.get("/delete_all_stations_info", deleteAllStationsInfo);
 router.get("/stations_info/:id", getStationsInfoById);

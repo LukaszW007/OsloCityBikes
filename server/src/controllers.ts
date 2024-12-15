@@ -111,7 +111,7 @@ export const getStationStatusById = async (
 // 	}
 // 	response.json(collectionData);
 // };
-export const updateMongo = async (request: Request, response: Response) => {
+export const getStations = async (request: Request, response: Response) => {
 	const apiData = await fetchedAPIData.stationInformation;
 	await updateStationsCollection(apiData!);
 };

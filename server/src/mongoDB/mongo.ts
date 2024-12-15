@@ -184,6 +184,12 @@ export const addApiDataToStationsCollection = async (
 	// await disconnect();
 };
 
+// Unhandled Rejection: TypeError: Cannot read properties of undefined (reading 'filter')
+//     at updateStationsCollection (file:///var/task/server/build/mongoDB/mongo.js:165:38)
+//     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+//     at async updateMongoDB (file:///var/task/server/build/mongoDB/fetch-data.js:22:5)
+// Node.js process exited with exit status: 128. The logs above can help with debugging the issue.
+
 export const updateStationsCollection = async (
 	apiData: StationInformation[]
 ) => {
