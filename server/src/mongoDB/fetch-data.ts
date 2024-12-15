@@ -8,11 +8,18 @@ import {
 	updateStationsCollection,
 } from "./mongo.js";
 
+let fetchedAPIData: FetchedAPIData;
+
 // Data fetching from API to update the map
-export const updateMongoDB = async () => {
+export const updateFromAPI = async () => {
 	console.log("Starting data fetch...");
-	const fetchedAPIData: FetchedAPIData = await dataFetching();
+	fetchedAPIData = await dataFetching();
 	console.log("Data is fetched");
+};
+export const updateMongoDB = async () => {
+	// console.log("Starting data fetch...");
+	// const fetchedAPIData: FetchedAPIData = await dataFetching();
+	// console.log("Data is fetched");
 
 	let apiStatusData = null;
 	while (apiStatusData === null) {
