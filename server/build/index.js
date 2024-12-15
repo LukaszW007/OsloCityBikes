@@ -56,6 +56,7 @@ export const dataFetching = async () => {
         stationStatus: null,
         stationStatusState: null,
     };
+    console.log("dataFetching station_information");
     await APIConnector.getJson("https://gbfs.urbansharing.com/oslobysykkel.no/station_information.json", null).then((data) => {
         // console.log('data',data);
         if (data) {
@@ -70,8 +71,10 @@ export const dataFetching = async () => {
                 version: data.data.version,
             };
         }
+        console.log("data is Fetched station_information");
         // fetchedData.stationInformationState = JSON.parse(data);
     });
+    console.log("dataFetching station_status");
     await APIConnector.getJson("https://gbfs.urbansharing.com/oslobysykkel.no/station_status.json", null).then((data) => {
         // console.log('data',data);
         if (data) {
@@ -83,6 +86,7 @@ export const dataFetching = async () => {
                 version: data.data.version,
             };
         }
+        console.log("data is Fetched station_status");
     });
     return fetchedData;
 };

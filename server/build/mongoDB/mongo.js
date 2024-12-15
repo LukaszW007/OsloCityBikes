@@ -122,6 +122,7 @@ export const addApiStatusDataToStationsInfoCollection = async (stationsStatusFro
             // });
         }
     }
+    console.log("documents.length ", documents.length);
     await StationInfo.insertMany(documents);
     console.log("Saving to mongoDB is done", documents.length);
     await disconnect();
