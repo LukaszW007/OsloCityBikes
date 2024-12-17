@@ -1,5 +1,9 @@
 import { Request, Response } from "express";
-import { fetchedAPIData, FetchedAPIData, dataFetching } from "./index.js";
+import {
+	fetchedStationStatusAPIData,
+	FetchedAPIData,
+	fetchedStationAPIData,
+} from "./index.js";
 import {
 	Station,
 	StationInfo,
@@ -16,7 +20,7 @@ export const getStationInformation = async (
 	response: Response
 ) => {
 	// const fetchedAPIData: FetchedAPIData = await dataFetching();
-	response.json(fetchedAPIData.stationInformation);
+	response.json(fetchedStationAPIData.stationInformation);
 };
 
 export const getStationInformationState = async (
@@ -25,7 +29,7 @@ export const getStationInformationState = async (
 ) => {
 	try {
 		// const fetchedAPIData: FetchedAPIData = await dataFetching();
-		response.json(fetchedAPIData.stationInformationState);
+		response.json(fetchedStationAPIData.stationInformationState);
 	} catch (err) {
 		console.error(err);
 		response.json({ success: false });
@@ -39,8 +43,8 @@ export const getStationInformationById = async (
 	const id = request.params.id;
 	let station;
 	// const fetchedAPIData: FetchedAPIData = await dataFetching();
-	if (fetchedAPIData.stationInformation) {
-		station = fetchedAPIData.stationInformation.find(
+	if (fetchedStationAPIData.stationInformation) {
+		station = fetchedStationAPIData.stationInformation.find(
 			(st) => st.station_id === id
 		);
 	} else {
@@ -59,7 +63,7 @@ export const getStationStatus = async (
 	response: Response
 ) => {
 	// const fetchedAPIData: FetchedAPIData = await dataFetching();
-	response.json(fetchedAPIData.stationStatus);
+	response.json(fetchedStationStatusAPIData.stationStatus);
 };
 
 export const getStationStatusState = async (
@@ -68,7 +72,7 @@ export const getStationStatusState = async (
 ) => {
 	try {
 		// const fetchedAPIData: FetchedAPIData = await dataFetching();
-		response.json(fetchedAPIData.stationStatusState);
+		response.json(fetchedStationStatusAPIData.stationStatusState);
 	} catch (err) {
 		console.error(err);
 		response.json({ success: false });
@@ -82,8 +86,8 @@ export const getStationStatusById = async (
 	const id = request.params.id;
 	// const fetchedAPIData: FetchedAPIData = await dataFetching();
 	let station;
-	if (fetchedAPIData.stationStatus) {
-		station = fetchedAPIData.stationStatus.find(
+	if (fetchedStationStatusAPIData.stationStatus) {
+		station = fetchedStationStatusAPIData.stationStatus.find(
 			(st) => st.station_id === id
 		);
 	} else {
@@ -112,7 +116,7 @@ export const getStationStatusById = async (
 // 	response.json(collectionData);
 // };
 export const getStations = async (request: Request, response: Response) => {
-	const apiData = await fetchedAPIData.stationInformation;
+	const apiData = await fetchedStationAPIData.stationInformation;
 	await updateStationsCollection(apiData!);
 };
 
