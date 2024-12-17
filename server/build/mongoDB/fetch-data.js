@@ -19,6 +19,24 @@ export const updateStationStatusFromAPI = async () => {
     console.log("Data is fetched");
     await disconnect();
 };
+// Data fetching from API to update the map
+export const mongoCheck = async () => {
+    const example = [
+        {
+            station_id: "5220",
+            is_installed: true,
+            is_renting: true,
+            is_returning: true,
+            last_reported: 1734463072,
+            num_vehicles_available: 0,
+            num_bikes_available: 0,
+            num_docks_available: 20,
+            vehicle_types_available: [{ vehicle_type_id: "bike", count: 0 }],
+        },
+    ];
+    await addApiStatusDataToStationStatusCollection(example);
+    await disconnect();
+};
 export const updateMongoDB = async () => {
     // console.log("Starting data fetch...");
     // const fetchedAPIData: FetchedAPIData = await dataFetching();

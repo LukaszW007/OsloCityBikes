@@ -12,6 +12,7 @@ import {
 	deleteAllStationsInfo,
 } from "./controllers.js";
 import {
+	mongoCheck,
 	updateStationFromAPI,
 	updateStationStatusFromAPI,
 } from "./mongoDB/fetch-data.js";
@@ -31,5 +32,6 @@ router.get("/delete_all_stations_info", deleteAllStationsInfo);
 router.get("/stations_info/:id", getStationsInfoById);
 router.get("/updatedbstation", updateStationFromAPI);
 router.get("/updatedbstationstatus", updateStationStatusFromAPI);
+router.get("/test", mongoCheck);
 
 export default router;
