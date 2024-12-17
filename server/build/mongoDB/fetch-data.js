@@ -1,9 +1,9 @@
 import { dataStationStatusFetching, dataStationInformationFetching, fetchedStationInformationAPIData, fetchedStationStatusAPIData, } from "../index.js";
-import { addApiStatusDataToStationStatusCollection, connect, disconnect, updateStationInformationCollection, } from "./mongo.js";
+import { addApiStatusDataToStationStatusCollection, disconnect, updateStationInformationCollection, } from "./mongo.js";
 let fetchedAPIData;
 // Data fetching from API to update the map
 export const updateStationFromAPI = async () => {
-    await connect();
+    // await connect();
     console.log("Starting data fetch...");
     const fetchedStationInformationAPIData = await dataStationInformationFetching();
     await updateStationInformationCollection(fetchedStationInformationAPIData.stationInformation); //updating stations' list collection
@@ -12,7 +12,7 @@ export const updateStationFromAPI = async () => {
 };
 // Data fetching from API to update the map
 export const updateStationStatusFromAPI = async () => {
-    await connect();
+    // await connect();
     console.log("Starting data fetch...");
     const fetchedStationStatusAPIData = await dataStationStatusFetching();
     await addApiStatusDataToStationStatusCollection(fetchedStationStatusAPIData.stationStatus); //updating statuses collection
