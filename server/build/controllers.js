@@ -1,14 +1,14 @@
-import { fetchedAPIData } from "./index.js";
+import { fetchedStationStatusAPIData, fetchedStationAPIData, } from "./index.js";
 import { StationInfo, deleteAllInCollection, updateStationsCollection, } from "./mongoDB/mongo.js";
 // const fetchedAPIData: FetchedAPIData = await dataFetching();
 export const getStationInformation = async (request, response) => {
     // const fetchedAPIData: FetchedAPIData = await dataFetching();
-    response.json(fetchedAPIData.stationInformation);
+    response.json(fetchedStationAPIData.stationInformation);
 };
 export const getStationInformationState = async (request, response) => {
     try {
         // const fetchedAPIData: FetchedAPIData = await dataFetching();
-        response.json(fetchedAPIData.stationInformationState);
+        response.json(fetchedStationAPIData.stationInformationState);
     }
     catch (err) {
         console.error(err);
@@ -19,8 +19,8 @@ export const getStationInformationById = async (request, response) => {
     const id = request.params.id;
     let station;
     // const fetchedAPIData: FetchedAPIData = await dataFetching();
-    if (fetchedAPIData.stationInformation) {
-        station = fetchedAPIData.stationInformation.find((st) => st.station_id === id);
+    if (fetchedStationAPIData.stationInformation) {
+        station = fetchedStationAPIData.stationInformation.find((st) => st.station_id === id);
     }
     else {
         console.log("Data is empty or not fetched from Oslo CityBike API");
@@ -34,12 +34,12 @@ export const getStationInformationById = async (request, response) => {
 };
 export const getStationStatus = async (request, response) => {
     // const fetchedAPIData: FetchedAPIData = await dataFetching();
-    response.json(fetchedAPIData.stationStatus);
+    response.json(fetchedStationStatusAPIData.stationStatus);
 };
 export const getStationStatusState = async (request, response) => {
     try {
         // const fetchedAPIData: FetchedAPIData = await dataFetching();
-        response.json(fetchedAPIData.stationStatusState);
+        response.json(fetchedStationStatusAPIData.stationStatusState);
     }
     catch (err) {
         console.error(err);
@@ -50,8 +50,8 @@ export const getStationStatusById = async (request, response) => {
     const id = request.params.id;
     // const fetchedAPIData: FetchedAPIData = await dataFetching();
     let station;
-    if (fetchedAPIData.stationStatus) {
-        station = fetchedAPIData.stationStatus.find((st) => st.station_id === id);
+    if (fetchedStationStatusAPIData.stationStatus) {
+        station = fetchedStationStatusAPIData.stationStatus.find((st) => st.station_id === id);
     }
     else {
         console.log("Data is empty or not fetched from Oslo CityBike API");
@@ -77,7 +77,7 @@ export const getStationStatusById = async (request, response) => {
 // 	response.json(collectionData);
 // };
 export const getStations = async (request, response) => {
-    const apiData = await fetchedAPIData.stationInformation;
+    const apiData = await fetchedStationAPIData.stationInformation;
     await updateStationsCollection(apiData);
 };
 export const getStationsInfo = async (request, response) => {

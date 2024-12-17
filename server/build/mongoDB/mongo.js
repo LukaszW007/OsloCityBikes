@@ -195,7 +195,9 @@ export const deleteAllInCollection = async () => {
     await disconnect();
 };
 export const Station = mongoose.model("Station", stationSchema);
+export const StationTemp = mongoose.model("Station", stationSchema);
 export const StationInfo = mongoose.model("stations_status", stationStatus);
+export const StationInfoTemp = mongoose.model("stations_status", stationStatus);
 // Disconnect from MongoDB Atlas
 // process.on("SIGINT", () => {
 export const disconnect = async () => {

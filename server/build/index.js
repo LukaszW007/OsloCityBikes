@@ -48,7 +48,7 @@ app.use(express.json());
 app.use(errorHandler);
 // const PORT = process.env.PORT || 3001;
 console.log("RUN APP AGAIN");
-export const dataFetching = async () => {
+export const dataStationFetching = async () => {
     console.log("dataFetching");
     let fetchedData = {
         stationInformation: null,
@@ -74,6 +74,15 @@ export const dataFetching = async () => {
         console.log("data is Fetched station_information");
         // fetchedData.stationInformationState = JSON.parse(data);
     });
+};
+export const dataStationStatusFetching = async () => {
+    console.log("dataFetching");
+    let fetchedData = {
+        stationInformation: null,
+        stationInformationState: null,
+        stationStatus: null,
+        stationStatusState: null,
+    };
     console.log("dataFetching station_status");
     await APIConnector.getJson("https://gbfs.urbansharing.com/oslobysykkel.no/station_status.json", null).then((data) => {
         // console.log('data',data);
@@ -90,7 +99,8 @@ export const dataFetching = async () => {
     });
     return fetchedData;
 };
-export const fetchedAPIData = await dataFetching();
+export const fetchedStationAPIData = await dataStationFetching();
+export const fetchedStationStatusAPIData = await dataStationStatusFetching();
 //////
 // Data fetching from API to update the map
 // cron.schedule("*/1 * * * *", async () => {
