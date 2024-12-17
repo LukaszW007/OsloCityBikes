@@ -107,7 +107,7 @@ export const stationStatus = new mongoose.Schema({
 	timeStamp: { type: Date, required: true },
 });
 
-export const addApiStatusDataToStationsInfoCollection = async (
+export const addApiStatusDataToStationStatusCollection = async (
 	stationsStatusFromAPI: any[]
 ) => {
 	if (!stationsStatusFromAPI || stationsStatusFromAPI.length <= 0) {
@@ -117,7 +117,7 @@ export const addApiStatusDataToStationsInfoCollection = async (
 		);
 		return;
 	}
-	console.log("addApiStatusDataToStationsInfoCollection");
+	console.log("addApiStatusDataToStationStatusCollection");
 	await connect();
 	const documents = [];
 	for (const station of stationsStatusFromAPI) {
@@ -126,7 +126,7 @@ export const addApiStatusDataToStationsInfoCollection = async (
 			station_id: station.station_id,
 		}).lean(true);
 		if (collectionStationData.length > 0) {
-			const stationItem = new StationInfo({
+			const stationItem = new StationsStatus({
 				station_id: station.station_id,
 				name: collectionStationData[0].name,
 				num_bikes_available: station.num_vehicles_available,
@@ -145,12 +145,12 @@ export const addApiStatusDataToStationsInfoCollection = async (
 		}
 	}
 	console.log("documents.length ", documents.length);
-	await StationInfo.insertMany(documents);
+	await StationsStatus.insertMany(documents);
 	console.log("Saving to mongoDB is done", documents.length);
 	await disconnect();
 };
 
-export const addApiDataToStationsCollection = async (
+export const addApiDataToStationInformationCollection = async (
 	stationsFromAPI: StationInformation[]
 ) => {
 	await connect();
@@ -189,8 +189,7 @@ export const addApiDataToStationsCollection = async (
 //     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
 //     at async updateMongoDB (file:///var/task/server/build/mongoDB/fetch-data.js:22:5)
 // Node.js process exited with exit status: 128. The logs above can help with debugging the issue.
-
-export const updateStationsCollection = async (
+export const updateStationInformationCollection = async (
 	apiData: StationInformation[]
 ) => {
 	await connect();
@@ -214,7 +213,7 @@ export const updateStationsCollection = async (
 	}
 
 	if (missingItemsArray.length > 0) {
-		addApiDataToStationsCollection(missingItemsArray);
+		addApiDataToStationInformationCollection(missingItemsArray);
 	} else {
 		console.log("stations list is up to date!");
 		await disconnect();
@@ -223,15 +222,18 @@ export const updateStationsCollection = async (
 
 export const deleteAllInCollection = async () => {
 	await connect();
-	const collectionData = await StationInfo.deleteMany({});
+	const collectionData = await StationsStatus.deleteMany({});
 	// console.log("collectionData ", collectionData);
 	await disconnect();
 };
 
 export const Station = mongoose.model("Station", stationSchema);
 export const StationTemp = mongoose.model("Station", stationSchema);
-export const StationInfo = mongoose.model("stations_status", stationStatus);
-export const StationInfoTemp = mongoose.model("stations_status", stationStatus);
+export const StationsStatus = mongoose.model("stations_status", stationStatus);
+export const StationsStatusTemp = mongoose.model(
+	"stations_status",
+	stationStatus
+);
 
 // Disconnect from MongoDB Atlas
 // process.on("SIGINT", () => {
@@ -244,7 +246,7 @@ export const disconnect = async () => {
 	}
 };
 
-// export const StationInfo = mongoose.model("StationInfo", stationStatus);
+// export const StationsStatus = mongoose.model("StationsStatus", stationStatus);
 
 // Station.find({}).then((result) => {
 // 	result.forEach((note) => {

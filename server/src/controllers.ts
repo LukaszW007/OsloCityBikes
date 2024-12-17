@@ -2,15 +2,15 @@ import { Request, Response } from "express";
 import {
 	fetchedStationStatusAPIData,
 	FetchedAPIData,
-	fetchedStationAPIData,
+	fetchedStationInformationAPIData,
 } from "./index.js";
 import {
 	Station,
-	StationInfo,
-	addApiDataToStationsCollection,
-	addApiStatusDataToStationsInfoCollection,
+	StationsStatus,
+	addApiDataToStationInformationCollection,
+	addApiStatusDataToStationStatusCollection,
 	deleteAllInCollection,
-	updateStationsCollection,
+	updateStationInformationCollection,
 } from "./mongoDB/mongo.js";
 
 // const fetchedAPIData: FetchedAPIData = await dataFetching();
@@ -20,7 +20,7 @@ export const getStationInformation = async (
 	response: Response
 ) => {
 	// const fetchedAPIData: FetchedAPIData = await dataFetching();
-	response.json(fetchedStationAPIData.stationInformation);
+	response.json(fetchedStationInformationAPIData.stationInformation);
 };
 
 export const getStationInformationState = async (
@@ -29,7 +29,7 @@ export const getStationInformationState = async (
 ) => {
 	try {
 		// const fetchedAPIData: FetchedAPIData = await dataFetching();
-		response.json(fetchedStationAPIData.stationInformationState);
+		response.json(fetchedStationInformationAPIData.stationInformationState);
 	} catch (err) {
 		console.error(err);
 		response.json({ success: false });
@@ -43,8 +43,8 @@ export const getStationInformationById = async (
 	const id = request.params.id;
 	let station;
 	// const fetchedAPIData: FetchedAPIData = await dataFetching();
-	if (fetchedStationAPIData.stationInformation) {
-		station = fetchedStationAPIData.stationInformation.find(
+	if (fetchedStationInformationAPIData.stationInformation) {
+		station = fetchedStationInformationAPIData.stationInformation.find(
 			(st) => st.station_id === id
 		);
 	} else {
@@ -116,16 +116,16 @@ export const getStationStatusById = async (
 // 	response.json(collectionData);
 // };
 export const getStations = async (request: Request, response: Response) => {
-	const apiData = await fetchedStationAPIData.stationInformation;
-	await updateStationsCollection(apiData!);
+	const apiData = await fetchedStationInformationAPIData.stationInformation;
+	await updateStationInformationCollection(apiData!);
 };
 
 export const getStationsInfo = async (request: Request, response: Response) => {
-	let collectionStatusData = await StationInfo.find().lean(true);
+	let collectionStatusData = await StationsStatus.find().lean(true);
 	// if (collectionStatusData.length <= 0) {
 	// 	const apiStatusData = await fetchedAPIData.stationStatus;
-	// 	await addApiStatusDataToStationsInfoCollection(apiStatusData!);
-	// 	collectionStatusData = await StationInfo.find().lean(true);
+	// 	await addApiStatusDataToStationStatusCollection(apiStatusData!);
+	// 	collectionStatusData = await StationsStatus.find().lean(true);
 	// 	console.log("Added new info about stations to DB");
 	// }
 	response.json(collectionStatusData);
@@ -136,7 +136,7 @@ export const deleteAllStationsInfo = async (
 	response: Response
 ) => {
 	await deleteAllInCollection();
-	const collectionStatusData = await StationInfo.find().lean(true);
+	const collectionStatusData = await StationsStatus.find().lean(true);
 	response.json(collectionStatusData);
 };
 
@@ -145,7 +145,7 @@ export const getStationsInfoById = async (
 	response: Response
 ) => {
 	const id = request.params.id;
-	StationInfo.find({
+	StationsStatus.find({
 		station_id: id,
 	})
 		.lean(true)

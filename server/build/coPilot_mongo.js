@@ -44,7 +44,7 @@ export {};
 // 	dayStamp: { type: Number, required: true },
 // 	timeStamp: { type: Date, required: true },
 // });
-// export const addApiStatusDataToStationsInfoCollection = async (
+// export const addApiStatusDataToStationStatusCollection = async (
 // 	stationsStatusFromAPI: any[]
 // ) => {
 // 	if (!stationsStatusFromAPI || stationsStatusFromAPI.length <= 0) {
@@ -54,7 +54,7 @@ export {};
 // 		);
 // 		return;
 // 	}
-// 	console.log("addApiStatusDataToStationsInfoCollection");
+// 	console.log("addApiStatusDataToStationStatusCollection");
 // 	await connect();
 // 	const documents = [];
 // 	for (const station of stationsStatusFromAPI) {
@@ -62,7 +62,7 @@ export {};
 // 			station_id: station.station_id,
 // 		}).lean(true);
 // 		if (collectionStationData.length > 0) {
-// 			const stationItem = new StationInfo({
+// 			const stationItem = new StationsStatus({
 // 				station_id: station.station_id,
 // 				name: collectionStationData[0].name,
 // 				num_bikes_available: station.num_vehicles_available,
@@ -74,7 +74,7 @@ export {};
 // 			documents.push(stationItem);
 // 		}
 // 	}
-// 	await StationInfo.insertMany(documents);
+// 	await StationsStatus.insertMany(documents);
 // 	console.log("Saving to mongoDB is done", documents.length);
 // 	// await disconnect();
 // };
@@ -121,11 +121,11 @@ export {};
 // };
 // export const deleteAllInCollection = async () => {
 // 	await connect();
-// 	await StationInfo.deleteMany({});
-// 	console.log("Deleted all documents in StationInfo collection");
+// 	await StationsStatus.deleteMany({});
+// 	console.log("Deleted all documents in StationsStatus collection");
 // };
 // export const Station = mongoose.model("Station", stationSchema);
-// export const StationInfo = mongoose.model("stations_status", stationStatus);
+// export const StationsStatus = mongoose.model("stations_status", stationStatus);
 // const disconnect = async () => {
 // 	await mongoose.disconnect();
 // };

@@ -1,14 +1,14 @@
-import { fetchedStationStatusAPIData, fetchedStationAPIData, } from "./index.js";
-import { StationInfo, deleteAllInCollection, updateStationsCollection, } from "./mongoDB/mongo.js";
+import { fetchedStationStatusAPIData, fetchedStationInformationAPIData, } from "./index.js";
+import { StationsStatus, deleteAllInCollection, updateStationInformationCollection, } from "./mongoDB/mongo.js";
 // const fetchedAPIData: FetchedAPIData = await dataFetching();
 export const getStationInformation = async (request, response) => {
     // const fetchedAPIData: FetchedAPIData = await dataFetching();
-    response.json(fetchedStationAPIData.stationInformation);
+    response.json(fetchedStationInformationAPIData.stationInformation);
 };
 export const getStationInformationState = async (request, response) => {
     try {
         // const fetchedAPIData: FetchedAPIData = await dataFetching();
-        response.json(fetchedStationAPIData.stationInformationState);
+        response.json(fetchedStationInformationAPIData.stationInformationState);
     }
     catch (err) {
         console.error(err);
@@ -19,8 +19,8 @@ export const getStationInformationById = async (request, response) => {
     const id = request.params.id;
     let station;
     // const fetchedAPIData: FetchedAPIData = await dataFetching();
-    if (fetchedStationAPIData.stationInformation) {
-        station = fetchedStationAPIData.stationInformation.find((st) => st.station_id === id);
+    if (fetchedStationInformationAPIData.stationInformation) {
+        station = fetchedStationInformationAPIData.stationInformation.find((st) => st.station_id === id);
     }
     else {
         console.log("Data is empty or not fetched from Oslo CityBike API");
@@ -77,27 +77,27 @@ export const getStationStatusById = async (request, response) => {
 // 	response.json(collectionData);
 // };
 export const getStations = async (request, response) => {
-    const apiData = await fetchedStationAPIData.stationInformation;
-    await updateStationsCollection(apiData);
+    const apiData = await fetchedStationInformationAPIData.stationInformation;
+    await updateStationInformationCollection(apiData);
 };
 export const getStationsInfo = async (request, response) => {
-    let collectionStatusData = await StationInfo.find().lean(true);
+    let collectionStatusData = await StationsStatus.find().lean(true);
     // if (collectionStatusData.length <= 0) {
     // 	const apiStatusData = await fetchedAPIData.stationStatus;
-    // 	await addApiStatusDataToStationsInfoCollection(apiStatusData!);
-    // 	collectionStatusData = await StationInfo.find().lean(true);
+    // 	await addApiStatusDataToStationStatusCollection(apiStatusData!);
+    // 	collectionStatusData = await StationsStatus.find().lean(true);
     // 	console.log("Added new info about stations to DB");
     // }
     response.json(collectionStatusData);
 };
 export const deleteAllStationsInfo = async (request, response) => {
     await deleteAllInCollection();
-    const collectionStatusData = await StationInfo.find().lean(true);
+    const collectionStatusData = await StationsStatus.find().lean(true);
     response.json(collectionStatusData);
 };
 export const getStationsInfoById = async (request, response) => {
     const id = request.params.id;
-    StationInfo.find({
+    StationsStatus.find({
         station_id: id,
     })
         .lean(true)

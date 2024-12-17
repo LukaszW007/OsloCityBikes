@@ -11,7 +11,7 @@ export {};
 // } from "./utils/middleware.js";
 // import { fetchedAPIData, dataFetching } from "./controllers.js";
 // import {
-// 	addApiStatusDataToStationsInfoCollection,
+// 	addApiStatusDataToStationStatusCollection,
 // 	updateStationsCollection,
 // } from "./coPilot_mongo.js";
 // const app = express();
@@ -42,7 +42,7 @@ export {};
 // 		await new Promise((resolve) => setTimeout(resolve, 500));
 // 		apiStatusData = fetchedAPIData.stationStatus;
 // 	}
-// 	await addApiStatusDataToStationsInfoCollection(apiStatusData!);
+// 	await addApiStatusDataToStationStatusCollection(apiStatusData!);
 // 	let apiData = null;
 // 	while (apiData === null) {
 // 		await new Promise((resolve) => setTimeout(resolve, 500));

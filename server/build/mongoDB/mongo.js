@@ -92,12 +92,12 @@ export const stationStatus = new mongoose.Schema({
     dayStamp: { type: Number, required: true },
     timeStamp: { type: Date, required: true },
 });
-export const addApiStatusDataToStationsInfoCollection = async (stationsStatusFromAPI) => {
+export const addApiStatusDataToStationStatusCollection = async (stationsStatusFromAPI) => {
     if (!stationsStatusFromAPI || stationsStatusFromAPI.length <= 0) {
         console.log("stationsStatusFromAPI has no data: ", stationsStatusFromAPI);
         return;
     }
-    console.log("addApiStatusDataToStationsInfoCollection");
+    console.log("addApiStatusDataToStationStatusCollection");
     await connect();
     const documents = [];
     for (const station of stationsStatusFromAPI) {
@@ -106,7 +106,7 @@ export const addApiStatusDataToStationsInfoCollection = async (stationsStatusFro
             station_id: station.station_id,
         }).lean(true);
         if (collectionStationData.length > 0) {
-            const stationItem = new StationInfo({
+            const stationItem = new StationsStatus({
                 station_id: station.station_id,
                 name: collectionStationData[0].name,
                 num_bikes_available: station.num_vehicles_available,
@@ -123,11 +123,11 @@ export const addApiStatusDataToStationsInfoCollection = async (stationsStatusFro
         }
     }
     console.log("documents.length ", documents.length);
-    await StationInfo.insertMany(documents);
+    await StationsStatus.insertMany(documents);
     console.log("Saving to mongoDB is done", documents.length);
     await disconnect();
 };
-export const addApiDataToStationsCollection = async (stationsFromAPI) => {
+export const addApiDataToStationInformationCollection = async (stationsFromAPI) => {
     await connect();
     stationsFromAPI.map(async (station) => {
         const stationItem = new Station({
@@ -162,7 +162,7 @@ export const addApiDataToStationsCollection = async (stationsFromAPI) => {
 //     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
 //     at async updateMongoDB (file:///var/task/server/build/mongoDB/fetch-data.js:22:5)
 // Node.js process exited with exit status: 128. The logs above can help with debugging the issue.
-export const updateStationsCollection = async (apiData) => {
+export const updateStationInformationCollection = async (apiData) => {
     await connect();
     const collectionData = await Station.find().lean(true);
     const collectionDataCount = collectionData.length;
@@ -181,7 +181,7 @@ export const updateStationsCollection = async (apiData) => {
         missingItemsArray.push(...missingItems);
     }
     if (missingItemsArray.length > 0) {
-        addApiDataToStationsCollection(missingItemsArray);
+        addApiDataToStationInformationCollection(missingItemsArray);
     }
     else {
         console.log("stations list is up to date!");
@@ -190,14 +190,14 @@ export const updateStationsCollection = async (apiData) => {
 };
 export const deleteAllInCollection = async () => {
     await connect();
-    const collectionData = await StationInfo.deleteMany({});
+    const collectionData = await StationsStatus.deleteMany({});
     // console.log("collectionData ", collectionData);
     await disconnect();
 };
 export const Station = mongoose.model("Station", stationSchema);
 export const StationTemp = mongoose.model("Station", stationSchema);
-export const StationInfo = mongoose.model("stations_status", stationStatus);
-export const StationInfoTemp = mongoose.model("stations_status", stationStatus);
+export const StationsStatus = mongoose.model("stations_status", stationStatus);
+export const StationsStatusTemp = mongoose.model("stations_status", stationStatus);
 // Disconnect from MongoDB Atlas
 // process.on("SIGINT", () => {
 export const disconnect = async () => {
@@ -209,7 +209,7 @@ export const disconnect = async () => {
         console.log("error disconnecting from MongoDB:", error.message);
     }
 };
-// export const StationInfo = mongoose.model("StationInfo", stationStatus);
+// export const StationsStatus = mongoose.model("StationsStatus", stationStatus);
 // Station.find({}).then((result) => {
 // 	result.forEach((note) => {
 // 		console.log(note);

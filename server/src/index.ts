@@ -13,10 +13,10 @@ import {
 import cors from "cors";
 import {
 	Station,
-	StationInfo,
-	addApiDataToStationsCollection,
-	addApiStatusDataToStationsInfoCollection,
+	StationsStatus,
+	addApiStatusDataToStationStatusCollection,
 	deleteAllInCollection,
+	updateStationInformationCollection,
 } from "./mongoDB/mongo.js";
 
 export interface FetchedAPIData {
@@ -128,7 +128,8 @@ app.use(express.json());
 app.use(errorHandler);
 // const PORT = process.env.PORT || 3001;
 console.log("RUN APP AGAIN");
-export const dataStationFetching = async (): Promise<any> => {
+
+export const dataStationInformationFetching = async (): Promise<any> => {
 	console.log("dataFetching");
 	let fetchedData: FetchedAPIData = {
 		stationInformation: null,
@@ -157,6 +158,8 @@ export const dataStationFetching = async (): Promise<any> => {
 		console.log("data is Fetched station_information");
 		// fetchedData.stationInformationState = JSON.parse(data);
 	});
+
+	return fetchedData;
 };
 
 export const dataStationStatusFetching = async (): Promise<any> => {
@@ -188,37 +191,39 @@ export const dataStationStatusFetching = async (): Promise<any> => {
 	return fetchedData;
 };
 
-export const fetchedStationAPIData: FetchedAPIData =
-	await dataStationFetching();
+export const fetchedStationInformationAPIData: FetchedAPIData =
+	await dataStationInformationFetching();
 export const fetchedStationStatusAPIData: FetchedAPIData =
 	await dataStationStatusFetching();
 
 //////
 // Data fetching from API to update the map
-// cron.schedule("*/1 * * * *", async () => {
-// 	console.log("Starting data fetch...");
-// 	await dataFetching();
-// 	console.log("Data is fetching");
+cron.schedule("*/1 * * * *", async () => {
+	console.log("Starting data fetch...");
+	// await dataStationStatusFetching();
+	console.log("Data is fetching");
 
-// 	let apiStatusData = null;
-// 	while (apiStatusData === null) {
-// 		await new Promise((resolve) => setTimeout(resolve, 500));
-// 		apiStatusData = fetchedAPIData.stationStatus;
-// 		console.log("status will be added to mongoDB");
-// 	}
-// 	await addApiStatusDataToStationsInfoCollection(apiStatusData!);
-// 	let apiData = null;
-// 	while (apiData === null) {
-// 		await new Promise((resolve) => setTimeout(resolve, 500));
-// 		apiData = fetchedAPIData.stationInformation;
-// 		console.log("stations will be added to mongoDB");
-// 	}
-// 	// const apiData = fetchedAPIData.stationInformation;
-// 	await updateStationsCollection(apiData!);
-// 	console.log("Data is fetching to update mongoDB");
-// });
+	let apiStatusData = null;
+	while (apiStatusData === null) {
+		await new Promise((resolve) => setTimeout(resolve, 500));
+		apiStatusData = fetchedStationStatusAPIData.stationStatus;
+		console.log("status will be added to mongoDB");
+	}
+	await addApiStatusDataToStationStatusCollection(apiStatusData!);
+	let apiData = null;
+	// await dataStationInformationFetching();
+	while (apiData === null) {
+		await new Promise((resolve) => setTimeout(resolve, 500));
+		apiData = fetchedStationInformationAPIData.stationInformation;
+		console.log("stations will be added to mongoDB");
+	}
+	// const apiData = fetchedAPIData.stationInformation;
+	await updateStationInformationCollection(apiData!);
+	console.log("Data is fetching to update mongoDB");
+});
 // setInterval(() => {
-// 	dataFetching();
+// 	dataStationInformationFetching();
+// 	dataStationStatusFetching();
 // 	console.log("Data is fetching");
 // }, 60 * 1000);
 // // //////
@@ -230,7 +235,7 @@ export const fetchedStationStatusAPIData: FetchedAPIData =
 // 		apiStatusData = fetchedAPIData.stationStatus;
 // 		console.log("status will be added to mongoDB");
 // 	}
-// 	await addApiStatusDataToStationsInfoCollection(apiStatusData!);
+// 	await addApiStatusDataToStationStatusCollection(apiStatusData!);
 // 	let apiData = null;
 // 	while (apiData === null) {
 // 		await new Promise((resolve) => setTimeout(resolve, 500));
@@ -238,7 +243,7 @@ export const fetchedStationStatusAPIData: FetchedAPIData =
 // 		console.log("stations will be added to mongoDB");
 // 	}
 // 	// const apiData = fetchedAPIData.stationInformation;
-// 	await updateStationsCollection(apiData!);
+// 	await updateStationInformationCollection(apiData!);
 // 	console.log("Data is fetching to update mongoDB");
 // }, 60 * 1000);
 
