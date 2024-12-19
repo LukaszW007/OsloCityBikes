@@ -98,7 +98,7 @@ export const addApiStatusDataToStationStatusCollection = async (stationsStatusFr
         return;
     }
     console.log("addApiStatusDataToStationStatusCollection");
-    await connect();
+    // await connect();
     const documents = [];
     for (const station of stationsStatusFromAPI) {
         //check does the station even exists in mongoDb collection of stations
@@ -125,7 +125,7 @@ export const addApiStatusDataToStationStatusCollection = async (stationsStatusFr
     console.log("documents.length ", documents.length);
     await StationsStatus.insertMany(documents);
     console.log("Saving to mongoDB is done", documents.length);
-    await disconnect();
+    // await disconnect();
 };
 export const addApiDataToStationInformationCollection = async (stationsFromAPI) => {
     await connect();
