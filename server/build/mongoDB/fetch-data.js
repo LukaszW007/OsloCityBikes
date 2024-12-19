@@ -1,5 +1,5 @@
 import { dataStationStatusFetching, dataStationInformationFetching, fetchedStationInformationAPIData, fetchedStationStatusAPIData, } from "../index.js";
-import { addApiStatusDataToStationStatusCollection, disconnect, updateStationInformationCollection, } from "./mongo.js";
+import { addApiStatusDataToStationStatusCollection, connect, disconnect, updateStationInformationCollection, } from "./mongo.js";
 let fetchedAPIData;
 // Data fetching from API to update the map
 export const updateStationFromAPI = async () => {
@@ -12,12 +12,13 @@ export const updateStationFromAPI = async () => {
 };
 // Data fetching from API to update the map
 export const updateStationStatusFromAPI = async () => {
-    // await connect();
+    connect();
     console.log("Starting data fetch...");
     const fetchedStationStatusAPIData = await dataStationStatusFetching();
+    // saving fetched API data into mongoDB
     await addApiStatusDataToStationStatusCollection(fetchedStationStatusAPIData.stationStatus); //updating statuses collection
     console.log("Data is fetched");
-    await disconnect();
+    disconnect();
 };
 // Data fetching from API to update the map
 export const mongoCheck = async () => {
