@@ -137,6 +137,7 @@ export const addApiStatusDataToStationStatusCollection = async (
 			});
 
 			documents.push(stationItem);
+			console.log("Documents:  ", documents.length);
 
 			// stationItem.save().then((savedStation) => {
 			// 	// response.json(savedStation)
