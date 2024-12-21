@@ -14,7 +14,8 @@ import {
 } from "./mongoDB/mongo.js";
 
 // const fetchedAPIData: FetchedAPIData = await dataFetching();
-
+export const maxDuration = 60;
+export const dynamic = "force-dynamic";
 export const getStationInformation = async (
 	request: Request,
 	response: Response
