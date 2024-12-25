@@ -183,7 +183,7 @@ export const addApiStatusDataToStationStatusCollection = async (
 			if (hasStatusChanged(currentStationStatus, status)) {
 				// Create a new StationStatus object
 				const newStatus = new StationsStatus({
-					stationId: stationId,
+					station_id: stationId,
 					name: stationMap.get(stationId),
 					num_bikes_available: status.num_vehicles_available,
 					num_docks_available: status.num_docks_available,
