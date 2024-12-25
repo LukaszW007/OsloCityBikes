@@ -185,12 +185,11 @@ export const addApiStatusDataToStationStatusCollection = async (
 				const newStatus = new StationsStatus({
 					stationId: stationId,
 					name: stationMap.get(stationId),
-					is_installed: status.is_installed,
-					is_renting: status.is_renting,
-					is_returning: status.is_returning,
-					last_reported: status.last_reported,
-					num_bikes_available: status.num_bikes_available,
+					num_bikes_available: status.num_vehicles_available,
 					num_docks_available: status.num_docks_available,
+					capacity: status.num_docks_available,
+					dayStamp: new Date().getDay(),
+					timeStamp: new Date(),
 				});
 				newStatuses.push(newStatus);
 			}
