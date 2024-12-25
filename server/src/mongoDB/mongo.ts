@@ -107,7 +107,7 @@ export const stationStatus = new mongoose.Schema({
 	timeStamp: { type: Date, required: true },
 });
 
-export const addApiStatusDataToStationStatusCollection = async (
+export const addApiStatusDataToStationStatusCollection2 = async (
 	stationsStatusFromAPI: any[]
 ) => {
 	if (!stationsStatusFromAPI || stationsStatusFromAPI.length <= 0) {
@@ -149,6 +149,60 @@ export const addApiStatusDataToStationStatusCollection = async (
 	await StationsStatus.insertMany(documents);
 	console.log("Saving to mongoDB is done", documents.length);
 	// await disconnect();
+};
+
+// Function to check if status has changed
+const hasStatusChanged = (currentStatus: any, newStatus: any) => {
+	return (
+		currentStatus.is_installed !== newStatus.is_installed ||
+		currentStatus.is_renting !== newStatus.is_renting ||
+		currentStatus.is_returning !== newStatus.is_returning ||
+		currentStatus.last_reported !== newStatus.last_reported ||
+		currentStatus.num_bikes_available !== newStatus.num_bikes_available ||
+		currentStatus.num_docks_available !== newStatus.num_docks_available
+	);
+};
+
+export const addApiStatusDataToStationStatusCollection = async (
+	fetchedStatuses: any[]
+) => {
+	// Fetch all stations once to reduce multiple database calls
+	const stations = await Station.find().exec();
+	const stationMap = new Map();
+	stations.forEach((station) => {
+		stationMap.set(station.station_id, station.name);
+	});
+	const newStatuses: any[] = [];
+
+	// Loop through fetched statuses and compare with current statuses
+	fetchedStatuses.forEach((status) => {
+		const stationId = status.station_id;
+		const currentStationStatus = stationMap.get(stationId);
+		if (currentStationStatus) {
+			// Check if the status has changed
+			if (hasStatusChanged(currentStationStatus, status)) {
+				// Create a new StationStatus object
+				const newStatus = new StationsStatus({
+					stationId: stationId,
+					name: stationMap.get(stationId),
+					is_installed: status.is_installed,
+					is_renting: status.is_renting,
+					is_returning: status.is_returning,
+					last_reported: status.last_reported,
+					num_bikes_available: status.num_bikes_available,
+					num_docks_available: status.num_docks_available,
+				});
+				newStatuses.push(newStatus);
+			}
+		}
+	});
+	// Bulk insert	new statuses();
+	if (newStatuses.length > 0) {
+		await StationsStatus.insertMany(newStatuses);
+	}
+	console.log(
+		"Status data has been updated in the StationStatus collection."
+	);
 };
 
 export const addApiDataToStationInformationCollection = async (
