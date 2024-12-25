@@ -11,10 +11,5 @@
 			"src": "/api/(.*)",
 			"dest": "build/index.js"
 		}
-	],
-	"functions": {
-		"build/index.js": {
-			"maxDuration": 60
-		}
-	}
+	]
 }
