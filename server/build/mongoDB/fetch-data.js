@@ -16,7 +16,7 @@ export const updateStationStatusFromAPI = async () => {
     console.log("Starting data fetch...");
     const fetchedStationStatusAPIData = await dataStationStatusFetching();
     // saving fetched API data into mongoDB
-    await addApiStatusDataToStationStatusCollection(fetchedStationStatusAPIData.stationStatus); //updating statuses collection
+    await addApiStatusDataToStationStatusCollection(fetchedStationStatusAPIData); //updating statuses collection
     console.log("Data is fetched");
     disconnect();
 };
@@ -35,7 +35,7 @@ export const mongoCheck = async () => {
             vehicle_types_available: [{ vehicle_type_id: "bike", count: 0 }],
         },
     ];
-    await addApiStatusDataToStationStatusCollection(example);
+    // await addApiStatusDataToStationStatusCollection(example);
     await disconnect();
 };
 export const updateMongoDB = async () => {
@@ -48,7 +48,7 @@ export const updateMongoDB = async () => {
     // 	apiStatusData = fetchedAPIData.stationStatus;
     // 	console.log("status will be added to mongoDB");
     // }
-    await addApiStatusDataToStationStatusCollection(fetchedStationStatusAPIData.stationStatus); //updating statuses collection
+    await addApiStatusDataToStationStatusCollection(fetchedStationStatusAPIData); //updating statuses collection
     // let apiData = null;
     // while (apiData === null) {
     // 	await new Promise((resolve) => setTimeout(resolve, 500));

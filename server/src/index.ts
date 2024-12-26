@@ -206,7 +206,7 @@ cron.schedule("*/1 * * * *", async () => {
 	let apiStatusData = null;
 	while (apiStatusData === null) {
 		await new Promise((resolve) => setTimeout(resolve, 500));
-		apiStatusData = fetchedStationStatusAPIData.stationStatus;
+		apiStatusData = fetchedStationStatusAPIData;
 		console.log("status will be added to mongoDB");
 	}
 	await addApiStatusDataToStationStatusCollection(apiStatusData!);

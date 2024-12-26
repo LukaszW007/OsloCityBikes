@@ -137,40 +137,52 @@ const hasStatusChanged = (currentStatus, newStatus) => {
         currentStatus.num_bikes_available !== newStatus.num_bikes_available ||
         currentStatus.num_docks_available !== newStatus.num_docks_available);
 };
-export const addApiStatusDataToStationStatusCollection = async (fetchedStatuses) => {
+export const addApiStatusDataToStationStatusCollection = async (fetchedStationStatusAPIData) => {
+    const fetchedStatuses = fetchedStationStatusAPIData.stationStatus;
+    const fetchedStatusesState = fetchedStationStatusAPIData.stationStatusState;
+    const lastStautsesStateUpdate = new Date(fetchedStatusesState.last_updated);
     // Fetch all stations once to reduce multiple database calls
     const stations = await Station.find().exec();
-    const stationMap = new Map();
-    stations.forEach((station) => {
-        stationMap.set(station.station_id, station.name);
-    });
-    const newStatuses = [];
-    // Loop through fetched statuses and compare with current statuses
-    fetchedStatuses.forEach((status) => {
-        const stationId = status.station_id;
-        const currentStationStatus = stationMap.get(stationId);
-        if (currentStationStatus) {
-            // Check if the status has changed
-            if (hasStatusChanged(currentStationStatus, status)) {
-                // Create a new StationStatus object
-                const newStatus = new StationsStatus({
-                    station_id: stationId,
-                    name: stationMap.get(stationId),
-                    num_bikes_available: status.num_vehicles_available,
-                    num_docks_available: status.num_docks_available,
-                    capacity: status.num_docks_available,
-                    dayStamp: new Date().getDay(),
-                    timeStamp: new Date(),
-                });
-                newStatuses.push(newStatus);
+    const latestAddedStatus = await StationsStatus.findOne()
+        .sort({ timeStamp: -1 })
+        .limit(1);
+    if (latestAddedStatus &&
+        lastStautsesStateUpdate > latestAddedStatus?.timeStamp) {
+        const stationMap = new Map();
+        stations.forEach((station) => {
+            stationMap.set(station.station_id, station.name);
+        });
+        const newStatuses = [];
+        // Loop through fetched statuses and compare with current statuses
+        fetchedStatuses.forEach((status) => {
+            const stationId = status.station_id;
+            const currentStationStatus = stationMap.get(stationId);
+            if (currentStationStatus) {
+                // Check if the status has changed
+                if (hasStatusChanged(currentStationStatus, status)) {
+                    // Create a new StationStatus object
+                    const newStatus = new StationsStatus({
+                        station_id: stationId,
+                        name: stationMap.get(stationId),
+                        num_bikes_available: status.num_vehicles_available,
+                        num_docks_available: status.num_docks_available,
+                        capacity: status.num_docks_available,
+                        dayStamp: new Date().getDay(),
+                        timeStamp: new Date(),
+                    });
+                    newStatuses.push(newStatus);
+                }
             }
+        });
+        // Bulk insert	new statuses();
+        if (newStatuses.length > 0) {
+            await StationsStatus.insertMany(newStatuses);
         }
-    });
-    // Bulk insert	new statuses();
-    if (newStatuses.length > 0) {
-        await StationsStatus.insertMany(newStatuses);
+        console.log("Status data has been updated in the StationStatus collection.");
     }
-    console.log("Status data has been updated in the StationStatus collection.");
+    else {
+        console.log(`Stations' statuses are up to date`);
+    }
 };
 export const addApiDataToStationInformationCollection = async (stationsFromAPI) => {
     await connect();

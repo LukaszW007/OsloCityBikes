@@ -38,7 +38,7 @@ export const updateStationStatusFromAPI = async () => {
 
 	// saving fetched API data into mongoDB
 	await addApiStatusDataToStationStatusCollection(
-		fetchedStationStatusAPIData.stationStatus!
+		fetchedStationStatusAPIData!
 	); //updating statuses collection
 	console.log("Data is fetched");
 	disconnect();
@@ -60,7 +60,7 @@ export const mongoCheck = async () => {
 		},
 	];
 
-	await addApiStatusDataToStationStatusCollection(example);
+	// await addApiStatusDataToStationStatusCollection(example);
 	await disconnect();
 };
 
@@ -76,7 +76,7 @@ export const updateMongoDB = async () => {
 	// 	console.log("status will be added to mongoDB");
 	// }
 	await addApiStatusDataToStationStatusCollection(
-		fetchedStationStatusAPIData.stationStatus!
+		fetchedStationStatusAPIData!
 	); //updating statuses collection
 	// let apiData = null;
 	// while (apiData === null) {
