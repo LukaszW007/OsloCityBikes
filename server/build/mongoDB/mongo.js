@@ -146,6 +146,12 @@ export const addApiStatusDataToStationStatusCollection = async (fetchedStationSt
     const latestAddedStatus = await StationsStatus.findOne()
         .sort({ timeStamp: -1 })
         .limit(1);
+    console.log("Latest added status to Mongo is: ", latestAddedStatus?.timeStamp);
+    console.log("Latest added status to API is: ", lastStautsesStateUpdate);
+    const compare = latestAddedStatus
+        ? lastStautsesStateUpdate > latestAddedStatus?.timeStamp
+        : null;
+    console.log("Mongo update is required: ", compare);
     if (latestAddedStatus &&
         lastStautsesStateUpdate > latestAddedStatus?.timeStamp) {
         const stationMap = new Map();
