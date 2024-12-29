@@ -140,7 +140,8 @@ const hasStatusChanged = (currentStatus, newStatus) => {
 export const addApiStatusDataToStationStatusCollection = async (fetchedStationStatusAPIData) => {
     const fetchedStatuses = fetchedStationStatusAPIData.stationStatus;
     const fetchedStatusesState = fetchedStationStatusAPIData.stationStatusState;
-    const lastStautsesStateUpdate = new Date(fetchedStatusesState.last_updated);
+    //fetchedStatusesState.last_updated is POSIX/unix timestamp so has to be *1000
+    const lastStautsesStateUpdate = new Date(fetchedStatusesState.last_updated * 1000);
     // Fetch all stations once to reduce multiple database calls
     const stations = await Station.find().exec();
     const latestAddedStatus = await StationsStatus.findOne()
