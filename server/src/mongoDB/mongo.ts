@@ -16,6 +16,33 @@ import {
 // 	process.exit(1);
 // }
 
+interface IStationsStatus {
+	name: string;
+	station_id: string;
+	num_bikes_available: number;
+	num_docks_available: number;
+	capacity: number;
+	apiLastUpdate: number;
+	dayStamp: number;
+	timeStamp: Date;
+}
+
+interface IAllStationsStatuses {
+	station_id: string;
+	name: string;
+	statuses: IStatusToMigrate[];
+}
+
+interface IStatusToMigrate {
+	day: number;
+	week: number;
+	timestamp: Date;
+	num_bikes_available: number;
+	num_docks_available: number;
+	apiLastUpdate: number;
+	capacity: number;
+}
+
 const password = process.argv[2];
 
 let url = process.env.MONGODB_URI as string;
@@ -102,14 +129,31 @@ export const stationSchema = new mongoose.Schema({
 });
 
 // Station schema
-export const stationStatus = new mongoose.Schema({
+export const stationsStatus = new mongoose.Schema<IStationsStatus>({
 	name: { type: String, required: true },
 	station_id: { type: String, required: true },
 	num_bikes_available: { type: Number, required: true },
 	num_docks_available: { type: Number, required: true },
 	capacity: { type: Number, required: true },
+	apiLastUpdate: { type: Number, required: true },
 	dayStamp: { type: Number, required: true },
 	timeStamp: { type: Date, required: true },
+});
+
+export const stationsStatusByDay = new mongoose.Schema({
+	station_id: { type: String, required: true },
+	name: { type: String, required: true },
+	statuses: [
+		{
+			day: { type: Number, required: true },
+			week: { type: Number, required: true },
+			timestamp: { type: Date, required: true },
+			num_bikes_available: { type: Number, required: true },
+			num_docks_available: { type: Number, required: true },
+			apiLastUpdate: { type: Number, required: true },
+			capacity: { type: Number, required: true },
+		},
+	],
 });
 
 export const addApiStatusDataToStationStatusCollection2 = async (
@@ -157,14 +201,33 @@ export const addApiStatusDataToStationStatusCollection2 = async (
 };
 
 // Function to check if status has changed
-const hasStatusChanged = (currentStatus: any, newStatus: any) => {
+const hasStatusChanged = (
+	fetchedStatuses: StationStatus[],
+	statusesFromMongo: IStationsStatus[],
+	stationId: string
+) => {
+	const statusesOfStation = statusesFromMongo.filter(
+		(status) => status.station_id === stationId
+	);
+	const lastStatus = statusesOfStation.reduce((latest, current) => {
+		return current.timeStamp > latest.timeStamp ? current : latest;
+	}, statusesOfStation[0]);
+
+	const statusFromApi = fetchedStatuses.find(
+		(status) => status.station_id === stationId
+	);
+	const dateOfStatusFromApiLastUpdate = statusFromApi
+		? new Date(statusFromApi?.last_reported * 1000)
+		: undefined;
+
+	const apiLastUpdateDate = new Date(lastStatus.apiLastUpdate * 1000);
+	//Status is changed only when number of bikes or available docks are changed
 	return (
-		currentStatus.is_installed !== newStatus.is_installed ||
-		currentStatus.is_renting !== newStatus.is_renting ||
-		currentStatus.is_returning !== newStatus.is_returning ||
-		currentStatus.last_reported !== newStatus.last_reported ||
-		currentStatus.num_bikes_available !== newStatus.num_bikes_available ||
-		currentStatus.num_docks_available !== newStatus.num_docks_available
+		apiLastUpdateDate !== dateOfStatusFromApiLastUpdate &&
+		(lastStatus.num_bikes_available !==
+			statusFromApi?.num_bikes_available ||
+			lastStatus.num_docks_available !==
+				statusFromApi?.num_docks_available)
 	);
 };
 
@@ -180,7 +243,8 @@ export const addApiStatusDataToStationStatusCollection = async (
 		fetchedStatusesState.last_updated * 1000
 	);
 	// Fetch all stations once to reduce multiple database calls
-	const stations = await Station.find().exec();
+	const statuses = await StationsStatus.find().exec();
+	const stationsFromMongo = await Station.find().exec();
 	const latestAddedStatus = await StationsStatus.findOne()
 		.sort({ timeStamp: -1 })
 		.limit(1);
@@ -200,12 +264,13 @@ export const addApiStatusDataToStationStatusCollection = async (
 	console.log("Mongo update is required: ", compare);
 
 	if (
-		latestAddedStatus &&
-		lastStautsesStateUpdate.getTime() >
-			latestAddedStatus?.timeStamp.getTime()
+		!latestAddedStatus ||
+		(latestAddedStatus &&
+			lastStautsesStateUpdate.getTime() >
+				latestAddedStatus?.timeStamp.getTime())
 	) {
 		const stationMap = new Map();
-		stations.forEach((station) => {
+		stationsFromMongo.forEach((station) => {
 			stationMap.set(station.station_id, station.name);
 		});
 		const newStatuses: any[] = [];
@@ -216,7 +281,10 @@ export const addApiStatusDataToStationStatusCollection = async (
 			const currentStationStatus = stationMap.get(stationId);
 			if (currentStationStatus) {
 				// Check if the status has changed
-				if (hasStatusChanged(currentStationStatus, status)) {
+				if (
+					!latestAddedStatus ||
+					hasStatusChanged(fetchedStatuses, statuses, stationId)
+				) {
 					// Create a new StationStatus object
 					const newStatus = new StationsStatus({
 						station_id: stationId,
@@ -224,6 +292,7 @@ export const addApiStatusDataToStationStatusCollection = async (
 						num_bikes_available: status.num_vehicles_available,
 						num_docks_available: status.num_docks_available,
 						capacity: status.num_docks_available,
+						apiLastUpdate: status.last_reported,
 						dayStamp: new Date().getDay(),
 						timeStamp: new Date(),
 					});
@@ -233,6 +302,7 @@ export const addApiStatusDataToStationStatusCollection = async (
 		});
 		// Bulk insert	new statuses();
 		if (newStatuses.length > 0) {
+			console.log(`All data: `, newStatuses.length);
 			await StationsStatus.insertMany(newStatuses);
 		}
 		console.log(
@@ -322,11 +392,61 @@ export const deleteAllInCollection = async () => {
 
 export const Station = mongoose.model("Station", stationSchema);
 export const StationTemp = mongoose.model("Station", stationSchema);
-export const StationsStatus = mongoose.model("stations_status", stationStatus);
+export const StationsStatus = mongoose.model("stations_status", stationsStatus);
 export const StationsStatusTemp = mongoose.model(
 	"stations_status",
-	stationStatus
+	stationsStatus
 );
+export const StationsStatusByDay = mongoose.model(
+	"stations_status_by_day",
+	stationsStatusByDay
+);
+
+function getCurrentWeek(timeStamp: Date): number {
+	const d = new Date(timeStamp);
+	let yearStart = +new Date(d.getFullYear(), 0, 1);
+	let today = +new Date(d.getFullYear(), d.getMonth(), d.getDate());
+	let dayOfYear = (today - yearStart + 1) / 86400000;
+	let week = Math.ceil(dayOfYear / 7);
+	return week;
+}
+
+export const migrateData = async () => {
+	const statuses = await StationsStatus.find().exec();
+	const stationsFromMongo = await Station.find().exec();
+
+	const migrationArray: IAllStationsStatuses[] = [];
+	for (const station of stationsFromMongo) {
+		const arrayOfStatusesToMigrate: IStatusToMigrate[] = [];
+		const statusesArrayOfStationId = statuses.filter(
+			(status) => status.station_id === station.station_id
+		);
+		for (const status of statusesArrayOfStationId) {
+			const statusToMigrate: IStatusToMigrate = {
+				day: status.dayStamp,
+				week: getCurrentWeek(status.timeStamp), // Custom function to get the week number
+				timestamp: status.timeStamp,
+				num_bikes_available: status.num_bikes_available,
+				num_docks_available: status.num_docks_available,
+				apiLastUpdate: status.apiLastUpdate,
+				capacity: status.capacity,
+			};
+			arrayOfStatusesToMigrate.push(statusToMigrate);
+		}
+
+		const singleDocument: IAllStationsStatuses = {
+			station_id: station.station_id,
+			name: station.name,
+			statuses: arrayOfStatusesToMigrate,
+		};
+
+		//Array ready to add to mongoDB collection
+		migrationArray.push(singleDocument);
+	}
+
+	console.log("migrationArray.length ", migrationArray.length);
+	await StationsStatusByDay.insertMany(migrationArray);
+};
 
 // Disconnect from MongoDB Atlas
 // process.on("SIGINT", () => {
