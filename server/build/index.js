@@ -4,7 +4,7 @@ import cron from "node-cron";
 import express from "express";
 import router from "./routes.js";
 import APIConnector from "./connectors/axiosConnector.js";
-import { requestLogger, unknownEndpoint, errorHandler, } from "./utils/middleware.js";
+import { requestLogger, unknownEndpoint, errorHandler, apiKeyChecker, ipWhitelistMiddleware } from "./utils/middleware.js";
 import cors from "cors";
 import { addApiStatusDataToStationStatusCollection, updateStationInformationCollection, } from "./mongoDB/mongo.js";
 const app = express();
@@ -48,6 +48,8 @@ app.get("/", (req, res) => res.status(404));
 app.use("/api", router);
 app.use(express.json());
 app.use(errorHandler);
+app.use(apiKeyChecker);
+app.use(ipWhitelistMiddleware);
 // const PORT = process.env.PORT || 3001;
 console.log("RUN APP AGAIN");
 export const dataStationInformationFetching = async () => {

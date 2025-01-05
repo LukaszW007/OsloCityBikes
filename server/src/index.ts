@@ -5,11 +5,7 @@ import express, { NextFunction, Request, Response } from "express";
 import router from "./routes.js";
 import mongoose from "mongoose";
 import APIConnector from "./connectors/axiosConnector.js";
-import {
-	requestLogger,
-	unknownEndpoint,
-	errorHandler,
-} from "./utils/middleware.js";
+import { requestLogger, unknownEndpoint, errorHandler, apiKeyChecker, ipWhitelistMiddleware } from "./utils/middleware.js";
 import cors from "cors";
 import {
 	Station,
@@ -126,6 +122,8 @@ app.get("/", (req, res) => res.status(404));
 app.use("/api", router);
 app.use(express.json());
 app.use(errorHandler);
+app.use(apiKeyChecker);
+app.use(ipWhitelistMiddleware);
 // const PORT = process.env.PORT || 3001;
 console.log("RUN APP AGAIN");
 
@@ -138,10 +136,7 @@ export const dataStationInformationFetching = async (): Promise<any> => {
 		stationStatusState: null,
 	};
 	console.log("dataFetching station_information");
-	await APIConnector.getJson(
-		"https://gbfs.urbansharing.com/oslobysykkel.no/station_information.json",
-		null
-	).then((data: any) => {
+	await APIConnector.getJson("https://gbfs.urbansharing.com/oslobysykkel.no/station_information.json", null).then((data: any) => {
 		// console.log('data',data);
 		if (data) {
 			// console.info(
@@ -171,10 +166,7 @@ export const dataStationStatusFetching = async (): Promise<any> => {
 		stationStatusState: null,
 	};
 	console.log("dataFetching station_status");
-	await APIConnector.getJson(
-		"https://gbfs.urbansharing.com/oslobysykkel.no/station_status.json",
-		null
-	).then((data: any) => {
+	await APIConnector.getJson("https://gbfs.urbansharing.com/oslobysykkel.no/station_status.json", null).then((data: any) => {
 		// console.log('data',data);
 		if (data) {
 			// console.info("Stations status data is fetched", data.headers.date);
@@ -191,10 +183,8 @@ export const dataStationStatusFetching = async (): Promise<any> => {
 	return fetchedData;
 };
 
-export const fetchedStationInformationAPIData: FetchedAPIData =
-	await dataStationInformationFetching();
-export const fetchedStationStatusAPIData: FetchedAPIData =
-	await dataStationStatusFetching();
+export const fetchedStationInformationAPIData: FetchedAPIData = await dataStationInformationFetching();
+export const fetchedStationStatusAPIData: FetchedAPIData = await dataStationStatusFetching();
 
 //////
 // Data fetching from API to update the map
