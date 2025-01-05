@@ -31,7 +31,24 @@ export const errorHandler = (err, req, res, next) => {
         return next(err);
     }
     console.error(err);
-    return res
-        .status(HTTP_SERVER_ERROR)
-        .send({ errors: [{ message: "Something went wrong" }] });
+    return res.status(HTTP_SERVER_ERROR).send({ errors: [{ message: "Something went wrong" }] });
+};
+export const apiKeyChecker = (req, res, next) => {
+    const apiKey = req.headers["x-api-key"];
+    if (apiKey === process.env.CRON_JOB_API_KEY) {
+        next(); // API key is valid, proceed to the route
+    }
+    else {
+        res.status(403).json({ message: "Forbidden: Invalid API Key" });
+    }
+};
+export const ipWhitelistMiddleware = (req, res, next) => {
+    const allowedIPs = ["116.203.134.67", "116.203.129.16", "23.88.105.37", "128.140.8.200"]; // Replace with actual IP range
+    const clientIP = req.ip || "";
+    if (allowedIPs.includes(clientIP)) {
+        next(); // IP is allowed, proceed to the route
+    }
+    else {
+        res.status(403).json({ message: "Forbidden: Unauthorized IP" });
+    }
 };

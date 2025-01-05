@@ -11,12 +11,8 @@ import {
 	getStationsInfoById,
 	deleteAllStationsInfo,
 } from "./controllers.js";
-import {
-	migrateStatusCollection,
-	mongoCheck,
-	updateStationFromAPI,
-	updateStationStatusFromAPI,
-} from "./mongoDB/fetch-data.js";
+import { migrateStatusCollection, mongoCheck, updateStationFromAPI, updateStationStatusFromAPI } from "./mongoDB/fetch-data.js";
+import { apiKeyChecker, ipWhitelistMiddleware } from "./utils/middleware.js";
 
 const router = express.Router();
 
@@ -31,9 +27,9 @@ router.get("/stations", getStations);
 router.get("/stations_info", getStationsInfo);
 router.get("/delete_all_stations_info", deleteAllStationsInfo);
 router.get("/stations_info/:id", getStationsInfoById);
-router.get("/updatedbstation", updateStationFromAPI);
-router.get("/updatedbstationstatus", updateStationStatusFromAPI);
+router.get("/updatedbstation", apiKeyChecker, ipWhitelistMiddleware, updateStationFromAPI);
+router.get("/updatedbstationstatus", apiKeyChecker, ipWhitelistMiddleware, updateStationStatusFromAPI);
 router.get("/test", mongoCheck);
-router.get("/migrateStatuses", migrateStatusCollection);
+router.get("/migrateStatuses", apiKeyChecker, ipWhitelistMiddleware, migrateStatusCollection);
 
 export default router;

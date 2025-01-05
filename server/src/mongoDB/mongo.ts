@@ -2,12 +2,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 import mongoose from "mongoose";
-import {
-	FetchedAPIData,
-	StationInformation,
-	StationStatus,
-	StationStatusState,
-} from "../index.js";
+import { FetchedAPIData, StationInformation, StationStatus, StationStatusState } from "../index.js";
 // import { MongoClient, ServerApiVersion } from "mongodb";
 // const { MongoClient, ServerApiVersion } = require("mongodb");
 
@@ -156,14 +151,9 @@ export const stationsStatusByDay = new mongoose.Schema({
 	],
 });
 
-export const addApiStatusDataToStationStatusCollection2 = async (
-	stationsStatusFromAPI: any[]
-) => {
+export const addApiStatusDataToStationStatusCollection2 = async (stationsStatusFromAPI: any[]) => {
 	if (!stationsStatusFromAPI || stationsStatusFromAPI.length <= 0) {
-		console.log(
-			"stationsStatusFromAPI has no data: ",
-			stationsStatusFromAPI
-		);
+		console.log("stationsStatusFromAPI has no data: ", stationsStatusFromAPI);
 		return;
 	}
 	console.log("addApiStatusDataToStationStatusCollection");
@@ -201,74 +191,39 @@ export const addApiStatusDataToStationStatusCollection2 = async (
 };
 
 // Function to check if status has changed
-const hasStatusChanged = (
-	fetchedStatuses: StationStatus[],
-	statusesFromMongo: IStationsStatus[],
-	stationId: string
-) => {
-	const statusesOfStation = statusesFromMongo.filter(
-		(status) => status.station_id === stationId
-	);
+const hasStatusChanged = (fetchedStatuses: StationStatus[], statusesFromMongo: IStationsStatus[], stationId: string) => {
+	const statusesOfStation = statusesFromMongo.filter((status) => status.station_id === stationId);
 	const lastStatus = statusesOfStation.reduce((latest, current) => {
 		return current.timeStamp > latest.timeStamp ? current : latest;
 	}, statusesOfStation[0]);
 
-	const statusFromApi = fetchedStatuses.find(
-		(status) => status.station_id === stationId
-	);
-	const dateOfStatusFromApiLastUpdate = statusFromApi
-		? new Date(statusFromApi?.last_reported * 1000)
-		: undefined;
+	const statusFromApi = fetchedStatuses.find((status) => status.station_id === stationId);
+	const dateOfStatusFromApiLastUpdate = statusFromApi ? new Date(statusFromApi?.last_reported * 1000) : undefined;
 
 	const apiLastUpdateDate = new Date(lastStatus.apiLastUpdate * 1000);
 	//Status is changed only when number of bikes or available docks are changed
 	return (
 		apiLastUpdateDate !== dateOfStatusFromApiLastUpdate &&
-		(lastStatus.num_bikes_available !==
-			statusFromApi?.num_bikes_available ||
-			lastStatus.num_docks_available !==
-				statusFromApi?.num_docks_available)
+		(lastStatus.num_bikes_available !== statusFromApi?.num_bikes_available ||
+			lastStatus.num_docks_available !== statusFromApi?.num_docks_available)
 	);
 };
 
-export const addApiStatusDataToStationStatusCollection = async (
-	fetchedStationStatusAPIData: FetchedAPIData
-) => {
-	const fetchedStatuses: StationStatus[] =
-		fetchedStationStatusAPIData.stationStatus!;
-	const fetchedStatusesState: StationStatusState =
-		fetchedStationStatusAPIData.stationStatusState!;
+export const addApiStatusDataToStationStatusCollection = async (fetchedStationStatusAPIData: FetchedAPIData): Promise<number> => {
+	const fetchedStatuses: StationStatus[] = fetchedStationStatusAPIData.stationStatus!;
+	const fetchedStatusesState: StationStatusState = fetchedStationStatusAPIData.stationStatusState!;
 	//fetchedStatusesState.last_updated is POSIX/unix timestamp so has to be *1000
-	const lastStautsesStateUpdate = new Date(
-		fetchedStatusesState.last_updated * 1000
-	);
+	const lastStautsesStateUpdate = new Date(fetchedStatusesState.last_updated * 1000);
 	// Fetch all stations once to reduce multiple database calls
 	const statuses = await StationsStatus.find().exec();
 	const stationsFromMongo = await Station.find().exec();
-	const latestAddedStatus = await StationsStatus.findOne()
-		.sort({ timeStamp: -1 })
-		.limit(1);
-	console.log(
-		"Latest added status to Mongo is: ",
-		latestAddedStatus?.timeStamp
-	);
-	console.log(
-		"Latest ",
-		fetchedStatusesState,
-		" added status to API is: ",
-		lastStautsesStateUpdate
-	);
-	const compare = latestAddedStatus
-		? lastStautsesStateUpdate > latestAddedStatus?.timeStamp
-		: null;
+	const latestAddedStatus = await StationsStatus.findOne().sort({ timeStamp: -1 }).limit(1);
+	console.log("Latest added status to Mongo is: ", latestAddedStatus?.timeStamp);
+	console.log("Latest ", fetchedStatusesState, " added status to API is: ", lastStautsesStateUpdate);
+	const compare = latestAddedStatus ? lastStautsesStateUpdate > latestAddedStatus?.timeStamp : null;
 	console.log("Mongo update is required: ", compare);
 
-	if (
-		!latestAddedStatus ||
-		(latestAddedStatus &&
-			lastStautsesStateUpdate.getTime() >
-				latestAddedStatus?.timeStamp.getTime())
-	) {
+	if (!latestAddedStatus || (latestAddedStatus && lastStautsesStateUpdate.getTime() > latestAddedStatus?.timeStamp.getTime())) {
 		const stationMap = new Map();
 		stationsFromMongo.forEach((station) => {
 			stationMap.set(station.station_id, station.name);
@@ -281,10 +236,7 @@ export const addApiStatusDataToStationStatusCollection = async (
 			const currentStationStatus = stationMap.get(stationId);
 			if (currentStationStatus) {
 				// Check if the status has changed
-				if (
-					!latestAddedStatus ||
-					hasStatusChanged(fetchedStatuses, statuses, stationId)
-				) {
+				if (!latestAddedStatus || hasStatusChanged(fetchedStatuses, statuses, stationId)) {
 					// Create a new StationStatus object
 					const newStatus = new StationsStatus({
 						station_id: stationId,
@@ -305,17 +257,15 @@ export const addApiStatusDataToStationStatusCollection = async (
 			console.log(`All data: `, newStatuses.length);
 			await StationsStatus.insertMany(newStatuses);
 		}
-		console.log(
-			"Status data has been updated in the StationStatus collection."
-		);
+		console.log("Status data has been updated in the StationStatus collection.");
+		return newStatuses.length;
 	} else {
 		console.log(`Stations' statuses are up to date`);
+		return 0;
 	}
 };
 
-export const addApiDataToStationInformationCollection = async (
-	stationsFromAPI: StationInformation[]
-) => {
+export const addApiDataToStationInformationCollection = async (stationsFromAPI: StationInformation[]) => {
 	await connect();
 	stationsFromAPI.map(async (station: StationInformation) => {
 		const stationItem = new Station({
@@ -352,19 +302,14 @@ export const addApiDataToStationInformationCollection = async (
 //     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
 //     at async updateMongoDB (file:///var/task/server/build/mongoDB/fetch-data.js:22:5)
 // Node.js process exited with exit status: 128. The logs above can help with debugging the issue.
-export const updateStationInformationCollection = async (
-	apiData: StationInformation[]
-) => {
+export const updateStationInformationCollection = async (apiData: StationInformation[]) => {
 	await connect();
 	const collectionData = await Station.find().lean(true);
 	const collectionDataCount = collectionData.length;
 	const missingItemsArray: StationInformation[] = [];
 	if (apiData?.length !== collectionDataCount) {
 		const missingItems = apiData!.filter((apiDataItem) => {
-			const checkedItem = collectionData!.filter(
-				(collectionDataItem) =>
-					collectionDataItem.station_id === apiDataItem.station_id
-			);
+			const checkedItem = collectionData!.filter((collectionDataItem) => collectionDataItem.station_id === apiDataItem.station_id);
 			if (checkedItem.length > 0) {
 				return null;
 			} else {
@@ -393,14 +338,8 @@ export const deleteAllInCollection = async () => {
 export const Station = mongoose.model("Station", stationSchema);
 export const StationTemp = mongoose.model("Station", stationSchema);
 export const StationsStatus = mongoose.model("stations_status", stationsStatus);
-export const StationsStatusTemp = mongoose.model(
-	"stations_status",
-	stationsStatus
-);
-export const StationsStatusByDay = mongoose.model(
-	"stations_status_by_day",
-	stationsStatusByDay
-);
+export const StationsStatusTemp = mongoose.model("stations_status", stationsStatus);
+export const StationsStatusByDay = mongoose.model("stations_status_by_day", stationsStatusByDay);
 
 function getCurrentWeek(timeStamp: Date): number {
 	const d = new Date(timeStamp);
@@ -418,9 +357,7 @@ export const migrateData = async () => {
 	const migrationArray: IAllStationsStatuses[] = [];
 	for (const station of stationsFromMongo) {
 		const arrayOfStatusesToMigrate: IStatusToMigrate[] = [];
-		const statusesArrayOfStationId = statuses.filter(
-			(status) => status.station_id === station.station_id
-		);
+		const statusesArrayOfStationId = statuses.filter((status) => status.station_id === station.station_id);
 		for (const status of statusesArrayOfStationId) {
 			const statusToMigrate: IStatusToMigrate = {
 				day: status.dayStamp,

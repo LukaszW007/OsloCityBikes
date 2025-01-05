@@ -145,16 +145,12 @@ const hasStatusChanged = (fetchedStatuses, statusesFromMongo, stationId) => {
         return current.timeStamp > latest.timeStamp ? current : latest;
     }, statusesOfStation[0]);
     const statusFromApi = fetchedStatuses.find((status) => status.station_id === stationId);
-    const dateOfStatusFromApiLastUpdate = statusFromApi
-        ? new Date(statusFromApi?.last_reported * 1000)
-        : undefined;
+    const dateOfStatusFromApiLastUpdate = statusFromApi ? new Date(statusFromApi?.last_reported * 1000) : undefined;
     const apiLastUpdateDate = new Date(lastStatus.apiLastUpdate * 1000);
     //Status is changed only when number of bikes or available docks are changed
     return (apiLastUpdateDate !== dateOfStatusFromApiLastUpdate &&
-        (lastStatus.num_bikes_available !==
-            statusFromApi?.num_bikes_available ||
-            lastStatus.num_docks_available !==
-                statusFromApi?.num_docks_available));
+        (lastStatus.num_bikes_available !== statusFromApi?.num_bikes_available ||
+            lastStatus.num_docks_available !== statusFromApi?.num_docks_available));
 };
 export const addApiStatusDataToStationStatusCollection = async (fetchedStationStatusAPIData) => {
     const fetchedStatuses = fetchedStationStatusAPIData.stationStatus;
@@ -164,19 +160,12 @@ export const addApiStatusDataToStationStatusCollection = async (fetchedStationSt
     // Fetch all stations once to reduce multiple database calls
     const statuses = await StationsStatus.find().exec();
     const stationsFromMongo = await Station.find().exec();
-    const latestAddedStatus = await StationsStatus.findOne()
-        .sort({ timeStamp: -1 })
-        .limit(1);
+    const latestAddedStatus = await StationsStatus.findOne().sort({ timeStamp: -1 }).limit(1);
     console.log("Latest added status to Mongo is: ", latestAddedStatus?.timeStamp);
     console.log("Latest ", fetchedStatusesState, " added status to API is: ", lastStautsesStateUpdate);
-    const compare = latestAddedStatus
-        ? lastStautsesStateUpdate > latestAddedStatus?.timeStamp
-        : null;
+    const compare = latestAddedStatus ? lastStautsesStateUpdate > latestAddedStatus?.timeStamp : null;
     console.log("Mongo update is required: ", compare);
-    if (!latestAddedStatus ||
-        (latestAddedStatus &&
-            lastStautsesStateUpdate.getTime() >
-                latestAddedStatus?.timeStamp.getTime())) {
+    if (!latestAddedStatus || (latestAddedStatus && lastStautsesStateUpdate.getTime() > latestAddedStatus?.timeStamp.getTime())) {
         const stationMap = new Map();
         stationsFromMongo.forEach((station) => {
             stationMap.set(station.station_id, station.name);
@@ -188,8 +177,7 @@ export const addApiStatusDataToStationStatusCollection = async (fetchedStationSt
             const currentStationStatus = stationMap.get(stationId);
             if (currentStationStatus) {
                 // Check if the status has changed
-                if (!latestAddedStatus ||
-                    hasStatusChanged(fetchedStatuses, statuses, stationId)) {
+                if (!latestAddedStatus || hasStatusChanged(fetchedStatuses, statuses, stationId)) {
                     // Create a new StationStatus object
                     const newStatus = new StationsStatus({
                         station_id: stationId,
@@ -211,9 +199,11 @@ export const addApiStatusDataToStationStatusCollection = async (fetchedStationSt
             await StationsStatus.insertMany(newStatuses);
         }
         console.log("Status data has been updated in the StationStatus collection.");
+        return newStatuses.length;
     }
     else {
         console.log(`Stations' statuses are up to date`);
+        return 0;
     }
 };
 export const addApiDataToStationInformationCollection = async (stationsFromAPI) => {
