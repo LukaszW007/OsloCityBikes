@@ -7,27 +7,16 @@ import {
 	StationInformation,
 	FetchedAPIData,
 } from "../index.js";
-import {
-	addApiStatusDataToStationStatusCollection,
-	connect,
-	disconnect,
-	migrateData,
-	Station,
-	updateStationInformationCollection,
-} from "./mongo.js";
+import { addApiStatusDataToStationStatusCollection, connect, disconnect, migrateData, Station, updateStationInformationCollection } from "./mongo.js";
 import mongoose from "mongoose";
 
 let fetchedAPIData: FetchedAPIData;
 
 // Data fetching from API to update the map
-export const updateStationFromAPI = async (
-	request: Request,
-	response: Response
-) => {
+export const updateStationFromAPI = async (request: Request, response: Response) => {
 	connect();
 	console.log("Starting data fetch...");
-	const fetchedStationInformationAPIData: FetchedAPIData =
-		await dataStationInformationFetching();
+	const fetchedStationInformationAPIData: FetchedAPIData = await dataStationInformationFetching();
 
 	// Ensure MongoDB connection is still established before saving data
 	while (mongoose.connection.readyState !== 1) {
@@ -35,23 +24,17 @@ export const updateStationFromAPI = async (
 		await new Promise((resolve) => setTimeout(resolve, 10));
 	}
 
-	await updateStationInformationCollection(
-		fetchedStationInformationAPIData.stationInformation!
-	); //updating stations' list collection
+	await updateStationInformationCollection(fetchedStationInformationAPIData.stationInformation!); //updating stations' list collection
 	console.log("Data is fetched");
 	disconnect();
 	response.send();
 };
 
 // Data fetching from API to update the map
-export const updateStationStatusFromAPI = async (
-	request: Request,
-	response: Response
-) => {
+export const updateStationStatusFromAPI = async (request: Request, response: Response) => {
 	connect();
 	console.log("Starting data fetch...");
-	const fetchedStationStatusAPIData: FetchedAPIData =
-		await dataStationStatusFetching();
+	const fetchedStationStatusAPIData: FetchedAPIData = await dataStationStatusFetching();
 
 	// Ensure MongoDB connection is still established before saving data
 	while (mongoose.connection.readyState !== 1) {
@@ -59,19 +42,14 @@ export const updateStationStatusFromAPI = async (
 		await new Promise((resolve) => setTimeout(resolve, 10));
 	}
 	// saving fetched API data into mongoDB
-	await addApiStatusDataToStationStatusCollection(
-		fetchedStationStatusAPIData!
-	); //updating statuses collection
+	const updatesNumber = await addApiStatusDataToStationStatusCollection(fetchedStationStatusAPIData!); //updating statuses collection
 	console.log("Data is fetched");
 	disconnect();
-	response.send();
+	response.send(updatesNumber);
 };
 
 // Data fetching from API to update the map
-export const migrateStatusCollection = async (
-	request: Request,
-	response: Response
-) => {
+export const migrateStatusCollection = async (request: Request, response: Response) => {
 	await connect();
 	console.log("Starting migration");
 
@@ -112,9 +90,7 @@ export const updateMongoDB = async () => {
 	// 	apiStatusData = fetchedAPIData.stationStatus;
 	// 	console.log("status will be added to mongoDB");
 	// }
-	await addApiStatusDataToStationStatusCollection(
-		fetchedStationStatusAPIData!
-	); //updating statuses collection
+	await addApiStatusDataToStationStatusCollection(fetchedStationStatusAPIData!); //updating statuses collection
 	// let apiData = null;
 	// while (apiData === null) {
 	// 	await new Promise((resolve) => setTimeout(resolve, 500));
@@ -122,8 +98,6 @@ export const updateMongoDB = async () => {
 	// 	console.log("stations will be added to mongoDB");
 	// }
 	// const apiData = fetchedAPIData.stationInformation;
-	await updateStationInformationCollection(
-		fetchedStationInformationAPIData.stationInformation!
-	); //updating stations' list collection
+	await updateStationInformationCollection(fetchedStationInformationAPIData.stationInformation!); //updating stations' list collection
 	console.log("Data is fetching to update mongoDB");
 };
