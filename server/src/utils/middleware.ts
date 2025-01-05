@@ -47,7 +47,8 @@ export const apiKeyChecker = (req: Request, res: Response, next: NextFunction) =
 	if (apiKey === process.env.CRON_JOB_API_KEY) {
 		next(); // API key is valid, proceed to the route
 	} else {
-		res.status(403).json({ message: "Forbidden: Invalid API Key" });
+		console.log("Forbidden: Invalid API Key");
+		res.status(403).send({ errors: [{ message: "Forbidden: Invalid API Key" }] });
 	}
 };
 
@@ -57,6 +58,7 @@ export const ipWhitelistMiddleware = (req: Request, res: Response, next: NextFun
 	if (allowedIPs.includes(clientIP)) {
 		next(); // IP is allowed, proceed to the route
 	} else {
-		res.status(403).json({ message: "Forbidden: Unauthorized IP" });
+		console.log("Forbidden: Unauthorized IP");
+		res.status(403).send({ errors: [{ message: "Forbidden: Unauthorized IP" }] });
 	}
 };

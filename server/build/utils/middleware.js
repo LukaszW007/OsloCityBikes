@@ -39,7 +39,8 @@ export const apiKeyChecker = (req, res, next) => {
         next(); // API key is valid, proceed to the route
     }
     else {
-        res.status(403).json({ message: "Forbidden: Invalid API Key" });
+        console.log("Forbidden: Invalid API Key");
+        res.status(403).send({ errors: [{ message: "Forbidden: Invalid API Key" }] });
     }
 };
 export const ipWhitelistMiddleware = (req, res, next) => {
@@ -49,6 +50,7 @@ export const ipWhitelistMiddleware = (req, res, next) => {
         next(); // IP is allowed, proceed to the route
     }
     else {
-        res.status(403).json({ message: "Forbidden: Unauthorized IP" });
+        console.log("Forbidden: Unauthorized IP");
+        res.status(403).send({ errors: [{ message: "Forbidden: Unauthorized IP" }] });
     }
 };
