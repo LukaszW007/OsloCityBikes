@@ -77,6 +77,7 @@ export interface StationStatusState {
 }
 
 const app = express();
+app.set("trust proxy", 1);
 
 //MongoDB
 let url = process.env.MONGODB_URI as string;
@@ -122,8 +123,8 @@ app.get("/", (req, res) => res.status(404));
 app.use("/api", router);
 app.use(express.json());
 app.use(errorHandler);
-app.use(apiKeyChecker);
-app.use(ipWhitelistMiddleware);
+// app.use(apiKeyChecker);
+// app.use(ipWhitelistMiddleware);
 // const PORT = process.env.PORT || 3001;
 console.log("RUN APP AGAIN");
 
