@@ -46,9 +46,11 @@ export const apiKeyChecker = (req, res, next) => {
 };
 export const ipWhitelistMiddleware = (req, res, next) => {
     const allowedIPs = ["116.203.134.67", "116.203.129.16", "23.88.105.37", "128.140.8.200"]; // Replace with actual IP range
-    const clientIP = req.ip || "";
+    const clientIP = (req.headers["x-forwarded-for"] || "").split(",").shift()?.trim() || req.socket.remoteAddress || "";
+    const actualClientIP = clientIP.includes("::ffff:") ? clientIP.split("::ffff:")[1] : clientIP;
     console.log("clientIP: ", clientIP);
-    if (allowedIPs.includes(clientIP)) {
+    console.log("clientIP: ", actualClientIP);
+    if (allowedIPs.includes(actualClientIP)) {
         next(); // IP is allowed, proceed to the route
     }
     else {
