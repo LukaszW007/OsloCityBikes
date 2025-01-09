@@ -46,8 +46,10 @@ export const apiKeyChecker = (req, res, next) => {
 };
 export const ipWhitelistMiddleware = (req, res, next) => {
     const allowedIPs = ["116.203.134.67", "116.203.129.16", "23.88.105.37", "128.140.8.200"]; // Replace with actual IP range
-    const clientIP = (req.headers["x-forwarded-for"] || "").split(",").shift()?.trim() || req.socket.remoteAddress || "";
-    const actualClientIP = clientIP.includes("::ffff:") ? clientIP.split("::ffff:")[1] : clientIP;
+    // Extract the IP from the `X-Forwarded-For` header or `req.ip`
+    const clientIP = req.headers["x-forwarded-for"] || req.ip || "";
+    // The `X-Forwarded-For` header can contain a comma-separated list of IPs so take the first one
+    const actualClientIP = clientIP.split(",")[0].trim();
     console.log("clientIP: ", clientIP);
     console.log("clientIP: ", actualClientIP);
     if (allowedIPs.includes(actualClientIP)) {
