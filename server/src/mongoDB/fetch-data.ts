@@ -52,7 +52,7 @@ export const updateStationStatusFromAPI = async (request: Request, response: Res
 	// saving fetched API data into mongoDB
 	const updatesNumber = await addApiStatusDataToStationStatusCollection(fetchedStationStatusAPIData!); //updating statuses collection
 
-	await updateCountStatus(updatesNumber);
+	updateCountStatus(updatesNumber);
 
 	console.log("Data is fetched");
 	disconnect();
