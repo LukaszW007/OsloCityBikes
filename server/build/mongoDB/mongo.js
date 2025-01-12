@@ -102,6 +102,10 @@ export const stationsStatusByDay = new mongoose.Schema({
         },
     ],
 });
+export const updateCountStatusSchema = new mongoose.Schema({
+    updates: { type: Number, required: true },
+    timestamp: { type: Date, default: Date.now },
+});
 export const addApiStatusDataToStationStatusCollection2 = async (stationsStatusFromAPI) => {
     if (!stationsStatusFromAPI || stationsStatusFromAPI.length <= 0) {
         console.log("stationsStatusFromAPI has no data: ", stationsStatusFromAPI);
@@ -278,6 +282,7 @@ export const StationTemp = mongoose.model("Station", stationSchema);
 export const StationsStatus = mongoose.model("stations_status", stationsStatus);
 export const StationsStatusTemp = mongoose.model("stations_status", stationsStatus);
 export const StationsStatusByDay = mongoose.model("stations_status_by_day", stationsStatusByDay);
+export const UpdateCountStatus = mongoose.model("update_count_status", updateCountStatusSchema);
 function getCurrentWeek(timeStamp) {
     const d = new Date(timeStamp);
     let yearStart = +new Date(d.getFullYear(), 0, 1);
