@@ -27,9 +27,9 @@ router.get("/stations", getStations);
 router.get("/stations_info", getStationsInfo);
 router.get("/delete_all_stations_info", deleteAllStationsInfo);
 router.get("/stations_info/:id", getStationsInfoById);
-router.get("/updatedbstation", apiKeyChecker, ipWhitelistMiddleware, updateStationFromAPI);
+router.post("/updatedbstation", apiKeyChecker, ipWhitelistMiddleware, updateStationFromAPI);
 router.post("/updatedbstationstatus", apiKeyChecker, ipWhitelistMiddleware, updateStationStatusFromAPI);
 router.get("/test", mongoCheck);
-router.get("/migrateStatuses", apiKeyChecker, ipWhitelistMiddleware, migrateStatusCollection);
+router.post("/migrateStatuses", apiKeyChecker, ipWhitelistMiddleware, migrateStatusCollection);
 
 export default router;
