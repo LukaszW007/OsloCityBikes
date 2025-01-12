@@ -45,8 +45,8 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(requestLogger);
-app.get("/favicon.ico", (req, res) => res.status(204));
-app.get("/", (req, res) => res.status(404));
+app.get("/favicon.ico", (req, res) => res.sendStatus(204));
+app.get("/", (req, res) => res.sendStatus(404));
 app.use("/api", router);
 app.use(errorHandler);
 // app.use(apiKeyChecker);

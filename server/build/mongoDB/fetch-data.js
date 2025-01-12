@@ -15,7 +15,7 @@ export const updateStationFromAPI = async (request, response) => {
     await updateStationInformationCollection(fetchedStationInformationAPIData.stationInformation); //updating stations' list collection
     console.log("Data is fetched");
     disconnect();
-    response.send();
+    response.status(200);
 };
 // Data fetching from API to update the map
 export const updateStationStatusFromAPI = async (request, response) => {
@@ -31,7 +31,7 @@ export const updateStationStatusFromAPI = async (request, response) => {
     const updatesNumber = await addApiStatusDataToStationStatusCollection(fetchedStationStatusAPIData); //updating statuses collection
     console.log("Data is fetched");
     disconnect();
-    response.send(updatesNumber);
+    response.status(200).json({ updates: updatesNumber });
 };
 // Data fetching from API to update the map
 export const migrateStatusCollection = async (request, response) => {
@@ -40,7 +40,7 @@ export const migrateStatusCollection = async (request, response) => {
     await migrateData();
     console.log("Data is migrated");
     disconnect();
-    response.send();
+    response.status(200);
 };
 // Data fetching from API to update the map
 export const mongoCheck = async () => {

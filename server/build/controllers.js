@@ -1,4 +1,4 @@
-import { fetchedStationStatusAPIData, fetchedStationInformationAPIData, } from "./index.js";
+import { fetchedStationStatusAPIData, fetchedStationInformationAPIData } from "./index.js";
 import { StationsStatus, deleteAllInCollection, updateStationInformationCollection, } from "./mongoDB/mongo.js";
 // const fetchedAPIData: FetchedAPIData = await dataFetching();
 export const maxDuration = 60;
@@ -31,7 +31,7 @@ export const getStationInformationById = async (request, response) => {
         response.json(station);
     }
     else {
-        response.status(404).end();
+        response.sendStatus(404).end();
     }
 };
 export const getStationStatus = async (request, response) => {
@@ -62,7 +62,7 @@ export const getStationStatusById = async (request, response) => {
         response.json(station);
     }
     else {
-        response.status(404).end();
+        response.sendStatus(404).end();
     }
 };
 ////////////////////
@@ -108,11 +108,11 @@ export const getStationsInfoById = async (request, response) => {
             response.json(station);
         }
         else {
-            response.status(404).end();
+            response.sendStatus(404).end();
         }
     })
         .catch((error) => {
         console.log(error);
-        response.status(500).end();
+        response.sendStatus(500).end();
     });
 };
