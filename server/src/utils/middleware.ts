@@ -56,6 +56,7 @@ export const apiKeyChecker = (req: Request, res: Response, next: NextFunction) =
 export const ipWhitelistMiddleware = (req: Request, res: Response, next: NextFunction) => {
 	const allowedIPs = ["116.203.134.67", "116.203.129.16", "23.88.105.37", "128.140.8.200"]; // Replace with actual IP range
 	// Extract the IP from the `X-Forwarded-For` header or `req.ip`
+	console.log("Whitelisting middleware");
 	console.log("req.headers: ", req.headers);
 	const clientIP = (req.headers["x-forwarded-for"] as string) || req.ip || "";
 

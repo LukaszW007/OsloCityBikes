@@ -43,11 +43,11 @@ const corsOptions = {
 };
 // console.log('corsOptions',corsOptions);
 app.use(cors(corsOptions));
+app.use(express.json());
 app.use(requestLogger);
 app.get("/favicon.ico", (req, res) => res.status(204));
 app.get("/", (req, res) => res.status(404));
 app.use("/api", router);
-app.use(express.json());
 app.use(errorHandler);
 // app.use(apiKeyChecker);
 // app.use(ipWhitelistMiddleware);
