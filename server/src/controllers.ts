@@ -1,9 +1,5 @@
 import { Request, Response } from "express";
-import {
-	fetchedStationStatusAPIData,
-	FetchedAPIData,
-	fetchedStationInformationAPIData,
-} from "./index.js";
+import { fetchedStationStatusAPIData, FetchedAPIData, fetchedStationInformationAPIData } from "./index.js";
 import {
 	Station,
 	StationsStatus,
@@ -16,18 +12,12 @@ import {
 // const fetchedAPIData: FetchedAPIData = await dataFetching();
 export const maxDuration = 60;
 export const dynamic = "force-dynamic";
-export const getStationInformation = async (
-	request: Request,
-	response: Response
-) => {
+export const getStationInformation = async (request: Request, response: Response) => {
 	// const fetchedAPIData: FetchedAPIData = await dataFetching();
 	response.json(fetchedStationInformationAPIData.stationInformation);
 };
 
-export const getStationInformationState = async (
-	request: Request,
-	response: Response
-) => {
+export const getStationInformationState = async (request: Request, response: Response) => {
 	try {
 		// const fetchedAPIData: FetchedAPIData = await dataFetching();
 		response.json(fetchedStationInformationAPIData.stationInformationState);
@@ -37,17 +27,12 @@ export const getStationInformationState = async (
 	}
 };
 
-export const getStationInformationById = async (
-	request: Request,
-	response: Response
-) => {
+export const getStationInformationById = async (request: Request, response: Response) => {
 	const id = request.params.id;
 	let station;
 	// const fetchedAPIData: FetchedAPIData = await dataFetching();
 	if (fetchedStationInformationAPIData.stationInformation) {
-		station = fetchedStationInformationAPIData.stationInformation.find(
-			(st) => st.station_id === id
-		);
+		station = fetchedStationInformationAPIData.stationInformation.find((st) => st.station_id === id);
 	} else {
 		console.log("Data is empty or not fetched from Oslo CityBike API");
 	}
@@ -55,22 +40,16 @@ export const getStationInformationById = async (
 	if (station) {
 		response.json(station);
 	} else {
-		response.status(404).end();
+		response.sendStatus(404).end();
 	}
 };
 
-export const getStationStatus = async (
-	request: Request,
-	response: Response
-) => {
+export const getStationStatus = async (request: Request, response: Response) => {
 	// const fetchedAPIData: FetchedAPIData = await dataFetching();
 	response.json(fetchedStationStatusAPIData.stationStatus);
 };
 
-export const getStationStatusState = async (
-	request: Request,
-	response: Response
-) => {
+export const getStationStatusState = async (request: Request, response: Response) => {
 	try {
 		// const fetchedAPIData: FetchedAPIData = await dataFetching();
 		response.json(fetchedStationStatusAPIData.stationStatusState);
@@ -80,17 +59,12 @@ export const getStationStatusState = async (
 	}
 };
 
-export const getStationStatusById = async (
-	request: Request,
-	response: Response
-) => {
+export const getStationStatusById = async (request: Request, response: Response) => {
 	const id = request.params.id;
 	// const fetchedAPIData: FetchedAPIData = await dataFetching();
 	let station;
 	if (fetchedStationStatusAPIData.stationStatus) {
-		station = fetchedStationStatusAPIData.stationStatus.find(
-			(st) => st.station_id === id
-		);
+		station = fetchedStationStatusAPIData.stationStatus.find((st) => st.station_id === id);
 	} else {
 		console.log("Data is empty or not fetched from Oslo CityBike API");
 	}
@@ -98,7 +72,7 @@ export const getStationStatusById = async (
 	if (station) {
 		response.json(station);
 	} else {
-		response.status(404).end();
+		response.sendStatus(404).end();
 	}
 };
 
@@ -132,19 +106,13 @@ export const getStationsInfo = async (request: Request, response: Response) => {
 	response.json(collectionStatusData);
 };
 
-export const deleteAllStationsInfo = async (
-	request: Request,
-	response: Response
-) => {
+export const deleteAllStationsInfo = async (request: Request, response: Response) => {
 	await deleteAllInCollection();
 	const collectionStatusData = await StationsStatus.find().lean(true);
 	response.json(collectionStatusData);
 };
 
-export const getStationsInfoById = async (
-	request: Request,
-	response: Response
-) => {
+export const getStationsInfoById = async (request: Request, response: Response) => {
 	const id = request.params.id;
 	StationsStatus.find({
 		station_id: id,
@@ -154,11 +122,11 @@ export const getStationsInfoById = async (
 			if (station.length > 0) {
 				response.json(station);
 			} else {
-				response.status(404).end();
+				response.sendStatus(404).end();
 			}
 		})
 		.catch((error) => {
 			console.log(error);
-			response.status(500).end();
+			response.sendStatus(500).end();
 		});
 };
