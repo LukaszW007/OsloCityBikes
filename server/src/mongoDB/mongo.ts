@@ -208,8 +208,8 @@ const hasStatusChanged = (fetchedStatuses: StationStatus[], statusesFromMongo: I
 
 	const statusFromApi = fetchedStatuses.find((status) => status.station_id === stationId);
 	const dateOfStatusFromApiLastUpdate = statusFromApi ? new Date(statusFromApi?.last_reported * 1000) : undefined;
-	console.log("lastStatus ", lastStatus);
-	console.log("lastStatus.apiLastUpdate ", lastStatus.apiLastUpdate);
+	// console.log("lastStatus ", lastStatus);
+	// console.log("lastStatus.apiLastUpdate ", lastStatus.apiLastUpdate);
 	const apiLastUpdateDate = new Date(lastStatus.apiLastUpdate * 1000);
 	//Status is changed only when number of bikes or available docks are changed
 	return (
