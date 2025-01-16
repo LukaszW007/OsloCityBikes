@@ -29,10 +29,10 @@ export const updateStationStatusFromAPI = async (request, response) => {
     }
     // saving fetched API data into mongoDB
     const updatesNumber = await addApiStatusDataToStationStatusCollection(fetchedStationStatusAPIData); //updating statuses collection
-    // updateCountStatus(updatesNumber);
+    // await updateCountStatus(updatesNumber);
     console.log("Data is fetched");
     disconnect();
-    response.status(200);
+    response.status(200).json({ updates: updatesNumber });
 };
 export const updateCountStatus = async (updatesNumber) => {
     const updateStatus = new UpdateCountStatus({ updates: updatesNumber });
