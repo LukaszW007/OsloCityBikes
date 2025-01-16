@@ -145,6 +145,8 @@ export const addApiStatusDataToStationStatusCollection2 = async (stationsStatusF
 // Function to check if status has changed
 const hasStatusChanged = (fetchedStatuses, statusesFromMongo, stationId) => {
     const statusesOfStation = statusesFromMongo.filter((status) => status.station_id === stationId);
+    if (!statusesOfStation)
+        return true;
     const lastStatus = statusesOfStation.reduce((latest, current) => {
         return current.timeStamp > latest.timeStamp ? current : latest;
     }, statusesOfStation[0]);
