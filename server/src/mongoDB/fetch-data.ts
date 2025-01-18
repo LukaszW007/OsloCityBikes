@@ -118,11 +118,14 @@ export const updateMongoDB = async () => {
 };
 
 export const getStations = async (request: Request, response: Response) => {
-	const apiData = await fetchedStationInformationAPIData.stationInformation;
-	await updateStationInformationCollection(apiData!);
+	await connect();
+	const stationsFromMongo = await Station.find().exec();
+	disconnect();
+	response.sendStatus(200).json(stationsFromMongo);
 };
 
 export const getStationsInfo = async (request: Request, response: Response) => {
+	await connect();
 	let collectionStatusData = await StationsStatus.find().lean(true);
 	// if (collectionStatusData.length <= 0) {
 	// 	const apiStatusData = await fetchedAPIData.stationStatus;
@@ -130,7 +133,8 @@ export const getStationsInfo = async (request: Request, response: Response) => {
 	// 	collectionStatusData = await StationsStatus.find().lean(true);
 	// 	console.log("Added new info about stations to DB");
 	// }
-	response.json(collectionStatusData);
+	disconnect();
+	response.sendStatus(200).json(collectionStatusData);
 };
 
 export const deleteAllStationsInfo = async (request: Request, response: Response) => {
@@ -140,20 +144,23 @@ export const deleteAllStationsInfo = async (request: Request, response: Response
 };
 
 export const getStationsInfoById = async (request: Request, response: Response) => {
+	await connect();
 	const id = request.params.id;
 	StationsStatus.find({
 		station_id: id,
 	})
 		.lean(true)
 		.then((station) => {
+			disconnect();
 			if (station.length > 0) {
-				response.json(station);
+				response.sendStatus(200).json(station);
 			} else {
 				response.sendStatus(404).end();
 			}
 		})
 		.catch((error) => {
 			console.log(error);
+			disconnect();
 			response.sendStatus(500).end();
 		});
 };

@@ -1,5 +1,5 @@
 import { dataStationStatusFetching, dataStationInformationFetching, fetchedStationInformationAPIData, fetchedStationStatusAPIData, } from "../index.js";
-import { addApiStatusDataToStationStatusCollection, deleteAllInCollection, migrateData, StationsStatus, UpdateCountStatus, updateStationInformationCollection, } from "./mongo.js";
+import { addApiStatusDataToStationStatusCollection, deleteAllInCollection, migrateData, Station, StationsStatus, UpdateCountStatus, updateStationInformationCollection, } from "./mongo.js";
 import mongoose from "mongoose";
 import { connect, disconnect } from "./utils.js";
 let fetchedAPIData;
@@ -88,10 +88,13 @@ export const updateMongoDB = async () => {
     console.log("Data is fetching to update mongoDB");
 };
 export const getStations = async (request, response) => {
-    const apiData = await fetchedStationInformationAPIData.stationInformation;
-    await updateStationInformationCollection(apiData);
+    await connect();
+    const stationsFromMongo = await Station.find().exec();
+    disconnect();
+    response.sendStatus(200).json(stationsFromMongo);
 };
 export const getStationsInfo = async (request, response) => {
+    await connect();
     let collectionStatusData = await StationsStatus.find().lean(true);
     // if (collectionStatusData.length <= 0) {
     // 	const apiStatusData = await fetchedAPIData.stationStatus;
@@ -99,7 +102,8 @@ export const getStationsInfo = async (request, response) => {
     // 	collectionStatusData = await StationsStatus.find().lean(true);
     // 	console.log("Added new info about stations to DB");
     // }
-    response.json(collectionStatusData);
+    disconnect();
+    response.sendStatus(200).json(collectionStatusData);
 };
 export const deleteAllStationsInfo = async (request, response) => {
     await deleteAllInCollection();
@@ -107,14 +111,16 @@ export const deleteAllStationsInfo = async (request, response) => {
     response.sendStatus(200).json(collectionStatusData);
 };
 export const getStationsInfoById = async (request, response) => {
+    await connect();
     const id = request.params.id;
     StationsStatus.find({
         station_id: id,
     })
         .lean(true)
         .then((station) => {
+        disconnect();
         if (station.length > 0) {
-            response.json(station);
+            response.sendStatus(200).json(station);
         }
         else {
             response.sendStatus(404).end();
@@ -122,6 +128,7 @@ export const getStationsInfoById = async (request, response) => {
     })
         .catch((error) => {
         console.log(error);
+        disconnect();
         response.sendStatus(500).end();
     });
 };
