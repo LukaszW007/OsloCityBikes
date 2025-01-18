@@ -1,6 +1,7 @@
 import { dataStationStatusFetching, dataStationInformationFetching, fetchedStationInformationAPIData, fetchedStationStatusAPIData, } from "../index.js";
-import { addApiStatusDataToStationStatusCollection, connect, disconnect, migrateData, UpdateCountStatus, updateStationInformationCollection, } from "./mongo.js";
+import { addApiStatusDataToStationStatusCollection, migrateData, UpdateCountStatus, updateStationInformationCollection } from "./mongo.js";
 import mongoose from "mongoose";
+import { connect, disconnect } from "./utils.js";
 let fetchedAPIData;
 // Data fetching from API to update the map
 export const updateStationFromAPI = async (request, response) => {

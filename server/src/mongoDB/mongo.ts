@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 dotenv.config();
 import mongoose from "mongoose";
 import { FetchedAPIData, StationInformation, StationStatus, StationStatusState } from "../index.js";
+import { stationSchema, stationsStatus, stationsStatusByDay, updateCountStatusSchema } from "./schemas.js";
+import { IStationsStatus, connect, disconnect, hasStatusChanged, getCurrentWeek } from "./utils.js";
 // import { MongoClient, ServerApiVersion } from "mongodb";
 // const { MongoClient, ServerApiVersion } = require("mongodb");
 
@@ -10,17 +12,6 @@ import { FetchedAPIData, StationInformation, StationStatus, StationStatusState }
 // 	console.log("give password as argument");
 // 	process.exit(1);
 // }
-
-interface IStationsStatus {
-	name: string;
-	station_id: string;
-	num_bikes_available: number;
-	num_docks_available: number;
-	capacity: number;
-	apiLastUpdate: number;
-	dayStamp: number;
-	timeStamp: Date;
-}
 
 interface IAllStationsStatuses {
 	station_id: string;
@@ -40,13 +31,6 @@ interface IStatusToMigrate {
 
 const password = process.argv[2];
 
-let url = process.env.MONGODB_URI as string;
-
-if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
-	url = process.env.MONGODB_URI_DEV as string;
-	console.log("Connecting to DEVELOPMENT mongoDB");
-}
-
 mongoose.set("strictQuery", false);
 // mongoose
 // 	.connect(url)
@@ -57,9 +41,12 @@ mongoose.set("strictQuery", false);
 // 		console.log("error connecting to MongoDB:", error.message);
 // 	});
 
-const options = {
-	serverSelectionTimeoutMS: 25000, // Increase the timeout to 25 seconds
-};
+export const Station = mongoose.model("Station", stationSchema);
+export const StationTemp = mongoose.model("Station", stationSchema);
+export const StationsStatus = mongoose.model("stations_status", stationsStatus);
+export const StationsStatusTemp = mongoose.model("stations_status", stationsStatus);
+export const StationsStatusByDay = mongoose.model("stations_status_by_day", stationsStatusByDay);
+export const UpdateCountStatus = mongoose.model("update_count_status", updateCountStatusSchema);
 
 ////////////////////////////////////////
 
@@ -92,69 +79,6 @@ const options = {
 // run().catch(console.dir);
 
 ////////////////////////////////////
-
-export const connect = async () => {
-	try {
-		await mongoose.connect(url, options);
-		console.log("connected to MongoDB with url: ", url);
-	} catch (error: any) {
-		console.log("error connecting to MongoDB:", error.message);
-	}
-};
-
-// Station schema
-export const stationSchema = new mongoose.Schema({
-	name: { type: String, required: true },
-	station_id: { type: String, required: true },
-	address: { type: String, required: true },
-	cross_street: { type: String, required: true },
-	lat: { type: Number, required: true },
-	lon: { type: Number, required: true },
-	is_virtual_station: { type: Boolean, required: true },
-	capacity: { type: Number, required: true },
-	station_area: {
-		type: { type: String, required: true },
-		coordinates: { type: Array, required: true },
-	},
-	rental_uris: {
-		android: { type: String, required: true },
-		ios: { type: String, required: true },
-	},
-	dateOfLastUpdate: { type: Date, required: true },
-});
-
-// Station schema
-export const stationsStatus = new mongoose.Schema<IStationsStatus>({
-	name: { type: String, required: true },
-	station_id: { type: String, required: true },
-	num_bikes_available: { type: Number, required: true },
-	num_docks_available: { type: Number, required: true },
-	capacity: { type: Number, required: true },
-	apiLastUpdate: { type: Number, required: true },
-	dayStamp: { type: Number, required: true },
-	timeStamp: { type: Date, required: true },
-});
-
-export const stationsStatusByDay = new mongoose.Schema({
-	station_id: { type: String, required: true },
-	name: { type: String, required: true },
-	statuses: [
-		{
-			day: { type: Number, required: true },
-			week: { type: Number, required: true },
-			timestamp: { type: Date, required: true },
-			num_bikes_available: { type: Number, required: true },
-			num_docks_available: { type: Number, required: true },
-			apiLastUpdate: { type: Number, required: true },
-			capacity: { type: Number, required: true },
-		},
-	],
-});
-
-export const updateCountStatusSchema = new mongoose.Schema({
-	updates: { type: Number, required: true },
-	timestamp: { type: Date, default: Date.now },
-});
 
 export const addApiStatusDataToStationStatusCollection2 = async (stationsStatusFromAPI: any[]) => {
 	if (!stationsStatusFromAPI || stationsStatusFromAPI.length <= 0) {
@@ -193,30 +117,6 @@ export const addApiStatusDataToStationStatusCollection2 = async (stationsStatusF
 	await StationsStatus.insertMany(documents);
 	console.log("Saving to mongoDB is done", documents.length);
 	// await disconnect();
-};
-
-// Function to check if status has changed
-const hasStatusChanged = (fetchedStatuses: StationStatus[], statusesFromMongo: IStationsStatus[], stationId: string) => {
-	const statusesOfStation = statusesFromMongo.filter((status) => status.station_id === stationId);
-	if (statusesOfStation && statusesOfStation.length === 0) {
-		return true;
-	}
-
-	const lastStatus = statusesOfStation.reduce((latest, current) => {
-		return current.timeStamp > latest.timeStamp ? current : latest;
-	}, statusesOfStation[0]);
-
-	const statusFromApi = fetchedStatuses.find((status) => status.station_id === stationId);
-	const dateOfStatusFromApiLastUpdate = statusFromApi ? new Date(statusFromApi?.last_reported * 1000) : undefined;
-	// console.log("lastStatus ", lastStatus);
-	// console.log("lastStatus.apiLastUpdate ", lastStatus.apiLastUpdate);
-	const apiLastUpdateDate = new Date(lastStatus.apiLastUpdate * 1000);
-	//Status is changed only when number of bikes or available docks are changed
-	return (
-		apiLastUpdateDate !== dateOfStatusFromApiLastUpdate &&
-		(lastStatus.num_bikes_available !== statusFromApi?.num_bikes_available ||
-			lastStatus.num_docks_available !== statusFromApi?.num_docks_available)
-	);
 };
 
 export const addApiStatusDataToStationStatusCollection = async (fetchedStationStatusAPIData: FetchedAPIData): Promise<number> => {
@@ -307,11 +207,6 @@ export const addApiDataToStationInformationCollection = async (stationsFromAPI: 
 	// await disconnect();
 };
 
-// Unhandled Rejection: TypeError: Cannot read properties of undefined (reading 'filter')
-//     at updateStationsCollection (file:///var/task/server/build/mongoDB/mongo.js:165:38)
-//     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
-//     at async updateMongoDB (file:///var/task/server/build/mongoDB/fetch-data.js:22:5)
-// Node.js process exited with exit status: 128. The logs above can help with debugging the issue.
 export const updateStationInformationCollection = async (apiData: StationInformation[]) => {
 	await connect();
 	const collectionData = await Station.find().lean(true);
@@ -344,22 +239,6 @@ export const deleteAllInCollection = async () => {
 	// console.log("collectionData ", collectionData);
 	await disconnect();
 };
-
-export const Station = mongoose.model("Station", stationSchema);
-export const StationTemp = mongoose.model("Station", stationSchema);
-export const StationsStatus = mongoose.model("stations_status", stationsStatus);
-export const StationsStatusTemp = mongoose.model("stations_status", stationsStatus);
-export const StationsStatusByDay = mongoose.model("stations_status_by_day", stationsStatusByDay);
-export const UpdateCountStatus = mongoose.model("update_count_status", updateCountStatusSchema);
-
-function getCurrentWeek(timeStamp: Date): number {
-	const d = new Date(timeStamp);
-	let yearStart = +new Date(d.getFullYear(), 0, 1);
-	let today = +new Date(d.getFullYear(), d.getMonth(), d.getDate());
-	let dayOfYear = (today - yearStart + 1) / 86400000;
-	let week = Math.ceil(dayOfYear / 7);
-	return week;
-}
 
 export const migrateData = async () => {
 	const statuses = await StationsStatus.find().exec();
@@ -395,57 +274,3 @@ export const migrateData = async () => {
 	console.log("migrationArray.length ", migrationArray.length);
 	await StationsStatusByDay.insertMany(migrationArray);
 };
-
-// Disconnect from MongoDB Atlas
-// process.on("SIGINT", () => {
-export const disconnect = async () => {
-	try {
-		await mongoose.disconnect();
-		console.log("disconnected from MongoDB");
-	} catch (error: any) {
-		console.log("error disconnecting from MongoDB:", error.message);
-	}
-};
-
-// export const StationsStatus = mongoose.model("StationsStatus", stationStatus);
-
-// Station.find({}).then((result) => {
-// 	result.forEach((note) => {
-// 		console.log(note);
-// 	});
-// 	mongoose.connection.close();
-// });
-
-// const station = new Station({
-// 	station_id: "4683",
-// 	address: "Valle Vision",
-// 	name: "Valle Vision",
-// 	cross_street: "Valle",
-// 	lat: 59.91606483663281,
-// 	lon: 10.807177606311825,
-// 	is_virtual_station: false,
-// 	capacity: 21,
-// 	station_area: {
-// 		type: "MultiPolygon",
-// 		coordinates: [
-// 			[
-// 				[
-// 					[10.806948306023173, 59.91613614756602],
-// 					[10.80693754708878, 59.91603598985276],
-// 					[10.807457049923272, 59.915989763114],
-// 					[10.807503159643403, 59.91609377318596],
-// 					[10.806948306023173, 59.91613614756602],
-// 				],
-// 			],
-// 		],
-// 	},
-// 	rental_uris: {
-// 		android: "oslobysykkel://stations/4683",
-// 		ios: "oslobysykkel://stations/4683",
-// 	},
-// });
-
-// station.save().then(() => {
-// 	console.log("station saved!");
-// 	// mongoose.connection.close();
-// });
