@@ -1,5 +1,5 @@
 import { dataStationStatusFetching, dataStationInformationFetching, fetchedStationInformationAPIData, fetchedStationStatusAPIData, } from "../index.js";
-import { addApiStatusDataToStationStatusCollection, migrateData, UpdateCountStatus, updateStationInformationCollection } from "./mongo.js";
+import { addApiStatusDataToStationStatusCollection, deleteAllInCollection, migrateData, StationsStatus, UpdateCountStatus, updateStationInformationCollection, } from "./mongo.js";
 import mongoose from "mongoose";
 import { connect, disconnect } from "./utils.js";
 let fetchedAPIData;
@@ -86,4 +86,42 @@ export const updateMongoDB = async () => {
     // const apiData = fetchedAPIData.stationInformation;
     await updateStationInformationCollection(fetchedStationInformationAPIData.stationInformation); //updating stations' list collection
     console.log("Data is fetching to update mongoDB");
+};
+export const getStations = async (request, response) => {
+    const apiData = await fetchedStationInformationAPIData.stationInformation;
+    await updateStationInformationCollection(apiData);
+};
+export const getStationsInfo = async (request, response) => {
+    let collectionStatusData = await StationsStatus.find().lean(true);
+    // if (collectionStatusData.length <= 0) {
+    // 	const apiStatusData = await fetchedAPIData.stationStatus;
+    // 	await addApiStatusDataToStationStatusCollection(apiStatusData!);
+    // 	collectionStatusData = await StationsStatus.find().lean(true);
+    // 	console.log("Added new info about stations to DB");
+    // }
+    response.json(collectionStatusData);
+};
+export const deleteAllStationsInfo = async (request, response) => {
+    await deleteAllInCollection();
+    const collectionStatusData = await StationsStatus.find().lean(true);
+    response.sendStatus(200).json(collectionStatusData);
+};
+export const getStationsInfoById = async (request, response) => {
+    const id = request.params.id;
+    StationsStatus.find({
+        station_id: id,
+    })
+        .lean(true)
+        .then((station) => {
+        if (station.length > 0) {
+            response.json(station);
+        }
+        else {
+            response.sendStatus(404).end();
+        }
+    })
+        .catch((error) => {
+        console.log(error);
+        response.sendStatus(500).end();
+    });
 };

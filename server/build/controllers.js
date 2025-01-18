@@ -1,5 +1,4 @@
 import { fetchedStationStatusAPIData, fetchedStationInformationAPIData } from "./index.js";
-import { StationsStatus, deleteAllInCollection, updateStationInformationCollection, } from "./mongoDB/mongo.js";
 // const fetchedAPIData: FetchedAPIData = await dataFetching();
 export const maxDuration = 60;
 export const dynamic = "force-dynamic";
@@ -64,55 +63,4 @@ export const getStationStatusById = async (request, response) => {
     else {
         response.sendStatus(404).end();
     }
-};
-////////////////////
-//fething from Mongo
-////////////////////
-// export const getStations = async (request: Request, response: Response) => {
-// 	let collectionData = await Station.find().lean(true);
-// 	// const fetchedAPIData: FetchedAPIData = await dataFetching();
-// 	if (collectionData.length <= 0) {
-// 		const apiData = await fetchedAPIData.stationInformation;
-// 		await updateStationsCollection(apiData!);
-// 		collectionData = await Station.find().lean(true);
-// 	}
-// 	response.json(collectionData);
-// };
-export const getStations = async (request, response) => {
-    const apiData = await fetchedStationInformationAPIData.stationInformation;
-    await updateStationInformationCollection(apiData);
-};
-export const getStationsInfo = async (request, response) => {
-    let collectionStatusData = await StationsStatus.find().lean(true);
-    // if (collectionStatusData.length <= 0) {
-    // 	const apiStatusData = await fetchedAPIData.stationStatus;
-    // 	await addApiStatusDataToStationStatusCollection(apiStatusData!);
-    // 	collectionStatusData = await StationsStatus.find().lean(true);
-    // 	console.log("Added new info about stations to DB");
-    // }
-    response.json(collectionStatusData);
-};
-export const deleteAllStationsInfo = async (request, response) => {
-    await deleteAllInCollection();
-    const collectionStatusData = await StationsStatus.find().lean(true);
-    response.json(collectionStatusData);
-};
-export const getStationsInfoById = async (request, response) => {
-    const id = request.params.id;
-    StationsStatus.find({
-        station_id: id,
-    })
-        .lean(true)
-        .then((station) => {
-        if (station.length > 0) {
-            response.json(station);
-        }
-        else {
-            response.sendStatus(404).end();
-        }
-    })
-        .catch((error) => {
-        console.log(error);
-        response.sendStatus(500).end();
-    });
 };

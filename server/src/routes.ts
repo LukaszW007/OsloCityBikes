@@ -6,11 +6,8 @@ import {
 	getStationStatus,
 	getStationStatusById,
 	getStationStatusState,
-	getStations,
-	getStationsInfo,
-	getStationsInfoById,
-	deleteAllStationsInfo,
 } from "./controllers.js";
+import { getStations, getStationsInfo, getStationsInfoById, deleteAllStationsInfo } from "./mongoDB/fetch-data.js";
 import { migrateStatusCollection, mongoCheck, updateStationFromAPI, updateStationStatusFromAPI } from "./mongoDB/fetch-data.js";
 import { apiKeyChecker, ipWhitelistMiddleware } from "./utils/middleware.js";
 
@@ -25,11 +22,11 @@ router.get("/station_status/:id", getStationStatusById);
 //from MongoDB
 router.get("/stations", getStations);
 router.get("/stations_info", getStationsInfo);
-router.get("/delete_all_stations_info", deleteAllStationsInfo);
+router.delete("/delete_all_stations_info", apiKeyChecker, ipWhitelistMiddleware, deleteAllStationsInfo);
 router.get("/stations_info/:id", getStationsInfoById);
 router.post("/updatedbstation", apiKeyChecker, ipWhitelistMiddleware, updateStationFromAPI);
 router.post("/updatedbstationstatus", apiKeyChecker, ipWhitelistMiddleware, updateStationStatusFromAPI);
-router.get("/test", mongoCheck);
+// router.get("/test", mongoCheck);
 router.post("/migrateStatuses", apiKeyChecker, ipWhitelistMiddleware, migrateStatusCollection);
 
 export default router;
