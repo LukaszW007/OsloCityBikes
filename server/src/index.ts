@@ -14,6 +14,7 @@ import {
 	deleteAllInCollection,
 	updateStationInformationCollection,
 } from "./mongoDB/mongo.js";
+import { connect, disconnect } from "./mongoDB/utils.js";
 
 export interface FetchedAPIData {
 	stationInformation: StationInformation[] | null;
@@ -209,8 +210,11 @@ cron.schedule("*/1 * * * *", async () => {
 		console.log("stations will be added to mongoDB");
 	}
 	// const apiData = fetchedAPIData.stationInformation;
+	await connect();
 	await updateStationInformationCollection(apiData!);
+
 	console.log("Data is fetching to update mongoDB");
+	disconnect();
 });
 // setInterval(() => {
 // 	dataStationInformationFetching();

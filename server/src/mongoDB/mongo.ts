@@ -176,7 +176,6 @@ export const addApiStatusDataToStationStatusCollection = async (fetchedStationSt
 };
 
 export const addApiDataToStationInformationCollection = async (stationsFromAPI: StationInformation[]) => {
-	await connect();
 	stationsFromAPI.map(async (station: StationInformation) => {
 		const stationItem = new Station({
 			station_id: station.station_id,
@@ -208,7 +207,6 @@ export const addApiDataToStationInformationCollection = async (stationsFromAPI: 
 };
 
 export const updateStationInformationCollection = async (apiData: StationInformation[]) => {
-	await connect();
 	const collectionData = await Station.find().lean(true);
 	const collectionDataCount = collectionData.length;
 	const missingItemsArray: StationInformation[] = [];
@@ -229,7 +227,6 @@ export const updateStationInformationCollection = async (apiData: StationInforma
 		addApiDataToStationInformationCollection(missingItemsArray);
 	} else {
 		console.log("stations list is up to date!");
-		await disconnect();
 	}
 };
 

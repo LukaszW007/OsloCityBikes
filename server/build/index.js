@@ -7,6 +7,7 @@ import APIConnector from "./connectors/axiosConnector.js";
 import { requestLogger, unknownEndpoint, errorHandler } from "./utils/middleware.js";
 import cors from "cors";
 import { addApiStatusDataToStationStatusCollection, updateStationInformationCollection, } from "./mongoDB/mongo.js";
+import { connect, disconnect } from "./mongoDB/utils.js";
 const app = express();
 app.set("trust proxy", 1);
 //MongoDB
@@ -128,8 +129,10 @@ cron.schedule("*/1 * * * *", async () => {
         console.log("stations will be added to mongoDB");
     }
     // const apiData = fetchedAPIData.stationInformation;
+    await connect();
     await updateStationInformationCollection(apiData);
     console.log("Data is fetching to update mongoDB");
+    disconnect();
 });
 // setInterval(() => {
 // 	dataStationInformationFetching();
