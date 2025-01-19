@@ -7,7 +7,7 @@ import {
 	getStationStatusById,
 	getStationStatusState,
 } from "./controllers.js";
-import { getStations, getStationsInfo, getStationsInfoById, deleteAllStationsInfo } from "./mongoDB/fetch-data.js";
+import { getStations, getStationsInfo, getStationsInfoById, deleteAllStationsInfo, getStatusesUpdatesCount } from "./mongoDB/fetch-data.js";
 import { migrateStatusCollection, mongoCheck, updateStationFromAPI, updateStationStatusFromAPI } from "./mongoDB/fetch-data.js";
 import { apiKeyChecker, ipWhitelistMiddleware } from "./utils/middleware.js";
 
@@ -28,5 +28,6 @@ router.post("/updatedbstation", apiKeyChecker, ipWhitelistMiddleware, updateStat
 router.post("/updatedbstationstatus", apiKeyChecker, ipWhitelistMiddleware, updateStationStatusFromAPI);
 // router.get("/test", mongoCheck);
 router.post("/migrateStatuses", apiKeyChecker, ipWhitelistMiddleware, migrateStatusCollection);
+router.post("/checkStatusesUpdatesCount", apiKeyChecker, getStatusesUpdatesCount);
 
 export default router;

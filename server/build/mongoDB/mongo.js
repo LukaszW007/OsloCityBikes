@@ -226,3 +226,7 @@ export const migrateData = async () => {
     console.log("migrationArray.length ", migrationArray.length);
     await StationsStatusByDay.insertMany(migrationArray);
 };
+export const updateCountStatus = async (updatesNumber) => {
+    const updateStatus = new UpdateCountStatus({ updates: updatesNumber });
+    updateStatus.save();
+};

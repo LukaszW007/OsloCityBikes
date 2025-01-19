@@ -58,11 +58,6 @@ export const updateStationStatusFromAPI = async (request: Request, response: Res
 	response.status(200).json({ updates: updatesNumber });
 };
 
-export const updateCountStatus = async (updatesNumber: number) => {
-	const updateStatus = new UpdateCountStatus({ updates: updatesNumber });
-	await updateStatus.save();
-};
-
 // Data fetching from API to update the map
 export const migrateStatusCollection = async (request: Request, response: Response) => {
 	await connect();
@@ -151,4 +146,15 @@ export const getStationsInfoById = async (request: Request, response: Response) 
 			disconnect();
 			response.sendStatus(500).end();
 		});
+};
+
+export const getStatusesUpdatesCount = async (request: Request, response: Response) => {
+	await connect();
+	const updatesCount = await UpdateCountStatus.findOne().sort({ timeStamp: -1 }).limit(1);
+	disconnect();
+	if (updatesCount && updatesCount?.updates > 0) {
+		response.sendStatus(200).json(updatesCount);
+	} else {
+		response.sendStatus(204);
+	}
 };

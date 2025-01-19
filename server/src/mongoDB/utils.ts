@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { StationStatus } from "../index.js";
+import { UpdateCountStatus } from "./mongo.js";
 
 export interface IStationsStatus {
 	name: string;
