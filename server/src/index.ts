@@ -190,32 +190,34 @@ export const fetchedStationStatusAPIData: FetchedAPIData = await dataStationStat
 
 //////
 // Data fetching from API to update the map
-cron.schedule("*/1 * * * *", async () => {
-	console.log("Starting data fetch...");
-	// await dataStationStatusFetching();
-	console.log("Data is fetching");
+if (process.env.NODE_ENV === "development") {
+	cron.schedule("*/1 * * * *", async () => {
+		console.log("Starting data fetch...");
+		// await dataStationStatusFetching();
+		console.log("Data is fetching");
 
-	let apiStatusData = null;
-	while (apiStatusData === null) {
-		await new Promise((resolve) => setTimeout(resolve, 500));
-		apiStatusData = fetchedStationStatusAPIData;
-		console.log("status will be added to mongoDB");
-	}
-	await addApiStatusDataToStationStatusCollection(apiStatusData!);
-	let apiData = null;
-	// await dataStationInformationFetching();
-	while (apiData === null) {
-		await new Promise((resolve) => setTimeout(resolve, 500));
-		apiData = fetchedStationInformationAPIData.stationInformation;
-		console.log("stations will be added to mongoDB");
-	}
-	// const apiData = fetchedAPIData.stationInformation;
-	await connect();
-	await updateStationInformationCollection(apiData!);
+		let apiStatusData = null;
+		while (apiStatusData === null) {
+			await new Promise((resolve) => setTimeout(resolve, 500));
+			apiStatusData = fetchedStationStatusAPIData;
+			console.log("status will be added to mongoDB");
+		}
+		await addApiStatusDataToStationStatusCollection(apiStatusData!);
+		let apiData = null;
+		// await dataStationInformationFetching();
+		while (apiData === null) {
+			await new Promise((resolve) => setTimeout(resolve, 500));
+			apiData = fetchedStationInformationAPIData.stationInformation;
+			console.log("stations will be added to mongoDB");
+		}
+		// const apiData = fetchedAPIData.stationInformation;
+		await connect();
+		await updateStationInformationCollection(apiData!);
 
-	console.log("Data is fetching to update mongoDB");
-	disconnect();
-});
+		console.log("Data is fetching to update mongoDB");
+		disconnect();
+	});
+}
 // setInterval(() => {
 // 	dataStationInformationFetching();
 // 	dataStationStatusFetching();
