@@ -35,8 +35,14 @@ export const updateStationFromAPI = async (request: Request, response: Response)
 
 	await updateStationInformationCollection(fetchedStationInformationAPIData.stationInformation!); //updating stations' list collection
 	console.log("Data is fetched");
-	disconnect();
-	response.status(200);
+
+	if (mongoose.connection.readyState !== 1) {
+		console.log("Connection status is ", mongoose.connection.readyState);
+		response.status(200);
+	} else {
+		disconnect();
+		response.status(200);
+	}
 };
 
 // Data fetching from API to update the map
@@ -54,8 +60,13 @@ export const updateStationStatusFromAPI = async (request: Request, response: Res
 	const updatesNumber = await addApiStatusDataToStationStatusCollection(fetchedStationStatusAPIData!); //updating statuses collection
 	// await updateCountStatus(updatesNumber);
 	console.log("Data is fetched");
-	disconnect();
-	response.status(200).json({ updates: updatesNumber });
+	if (mongoose.connection.readyState !== 1) {
+		console.log("Connection status is ", mongoose.connection.readyState);
+		response.status(200).json({ updates: updatesNumber });
+	} else {
+		disconnect();
+		response.status(200).json({ updates: updatesNumber });
+	}
 };
 
 // Data fetching from API to update the map
