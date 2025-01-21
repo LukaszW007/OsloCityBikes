@@ -158,10 +158,8 @@ export const addApiDataToStationInformationCollection = async (stationsFromAPI) 
             },
             dateOfLastUpdate: new Date(),
         });
-        await stationItem.save().then((savedStation) => {
-            // response.json(savedStation)
-            console.log("station saved!");
-        });
+        await stationItem.save();
+        console.log("station saved!");
     });
     console.log("stations list is updated!");
     // await disconnect();

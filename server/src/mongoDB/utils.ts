@@ -22,6 +22,8 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
 
 const options = {
 	serverSelectionTimeoutMS: 25000, // Increase the timeout to 25 seconds
+	useNewUrlParser: true,
+	useUnifiedTopology: true,
 };
 
 export const connect = async () => {

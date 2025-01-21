@@ -5,7 +5,9 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
     console.log("Connecting to DEVELOPMENT mongoDB");
 }
 const options = {
-    serverSelectionTimeoutMS: 25000, // Increase the timeout to 25 seconds
+    serverSelectionTimeoutMS: 25000,
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
 };
 export const connect = async () => {
     try {
