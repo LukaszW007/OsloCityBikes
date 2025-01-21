@@ -184,7 +184,7 @@ export const updateStationInformationCollection = async (apiData) => {
         missingItemsArray.push(...missingItems);
     }
     if (missingItemsArray.length > 0) {
-        addApiDataToStationInformationCollection(missingItemsArray);
+        await addApiDataToStationInformationCollection(missingItemsArray);
     }
     else {
         console.log("stations list is up to date!");
