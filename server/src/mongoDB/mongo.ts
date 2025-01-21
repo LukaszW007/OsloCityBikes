@@ -221,6 +221,7 @@ export const updateStationInformationCollection = async (apiData: StationInforma
 		missingItemsArray.push(...missingItems);
 	}
 
+	console.log("missingItemsArray", missingItemsArray);
 	if (missingItemsArray.length > 0) {
 		await addApiDataToStationInformationCollection(missingItemsArray);
 	} else {
