@@ -20,6 +20,7 @@ export const updateStationFromAPI = async (request, response) => {
         response.status(200);
     }
     else {
+        console.log("Disconnecting! Connection status is ", mongoose.connection.readyState);
         disconnect();
         response.status(200);
     }
