@@ -23,26 +23,30 @@ let fetchedAPIData: FetchedAPIData;
 
 // Data fetching from API to update the map
 export const updateStationFromAPI = async (request: Request, response: Response) => {
-	connect();
-	console.log("Starting data fetch...");
-	const fetchedStationInformationAPIData: FetchedAPIData = await dataStationInformationFetching();
+	try {
+		connect();
+		console.log("Starting data fetch...");
+		const fetchedStationInformationAPIData: FetchedAPIData = await dataStationInformationFetching();
 
-	// Ensure MongoDB connection is still established before saving data
-	while (mongoose.connection.readyState !== 1) {
-		console.log("Waiting for MongoDB connection to be re-established...");
-		await new Promise((resolve) => setTimeout(resolve, 10));
-	}
+		// Ensure MongoDB connection is still established before saving data
+		while (mongoose.connection.readyState !== 1) {
+			console.log("Waiting for MongoDB connection to be re-established...");
+			await new Promise((resolve) => setTimeout(resolve, 10));
+		}
 
-	await updateStationInformationCollection(fetchedStationInformationAPIData.stationInformation!); //updating stations' list collection
-	console.log("Data is fetched");
+		await updateStationInformationCollection(fetchedStationInformationAPIData.stationInformation!); //updating stations' list collection
+		console.log("Data is fetched");
 
-	if (mongoose.connection.readyState !== 1) {
-		console.log("Connection status is ", mongoose.connection.readyState);
-		response.status(200);
-	} else {
-		console.log("Disconnecting! Connection status is ", mongoose.connection.readyState);
-		disconnect();
-		response.status(200);
+		if (mongoose.connection.readyState !== 1) {
+			console.log("Connection status is ", mongoose.connection.readyState);
+			disconnect();
+		} else {
+			console.log("Disconnected already! Connection status is ", mongoose.connection.readyState);
+		}
+		response.status(200).send("Station information updated successfully");
+	} catch (error) {
+		console.error("Error updating station from API:", error);
+		response.status(500).send("Internal server error");
 	}
 };
 
