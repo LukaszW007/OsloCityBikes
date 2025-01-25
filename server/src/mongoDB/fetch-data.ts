@@ -76,13 +76,18 @@ export const updateStationStatusFromAPI = async (request: Request, response: Res
 
 // Data fetching from API to update the map
 export const migrateStatusCollection = async (request: Request, response: Response) => {
-	await connect();
-	console.log("Starting migration");
+	try {
+		await connect();
+		console.log("Starting migration");
 
-	await migrateData();
-	console.log("Data is migrated");
-	disconnect();
-	response.status(200);
+		await migrateData();
+		console.log("Data is migrated");
+		disconnect();
+		response.status(200).send(`Station's statuses are transformed and migrated to the collection: stations_status_by_days`);
+	} catch (error) {
+		console.error("Error updating station from API:", error);
+		response.status(500).send("Internal server error");
+	}
 };
 
 // Data fetching from API to update the map

@@ -236,6 +236,7 @@ export const deleteAllInCollection = async () => {
 	await disconnect();
 };
 
+// Migrating statuses collection to the collection of stations and an an array of their statuses
 export const migrateData = async () => {
 	const statuses = await StationsStatus.find().exec();
 	const stationsFromMongo = await Station.find().exec();
@@ -243,8 +244,9 @@ export const migrateData = async () => {
 	const migrationArray: IAllStationsStatuses[] = [];
 	for (const station of stationsFromMongo) {
 		const arrayOfStatusesToMigrate: IStatusToMigrate[] = [];
-		const statusesArrayOfStationId = statuses.filter((status) => status.station_id === station.station_id);
+		const statusesArrayOfStationId = statuses.filter((status) => status.station_id === station.station_id); //filtering all collected statuses of particular station
 		for (const status of statusesArrayOfStationId) {
+			//creating an array of all statuses
 			const statusToMigrate: IStatusToMigrate = {
 				day: status.dayStamp,
 				week: getCurrentWeek(status.timeStamp), // Custom function to get the week number
@@ -258,6 +260,7 @@ export const migrateData = async () => {
 		}
 
 		const singleDocument: IAllStationsStatuses = {
+			// creating a single document corresponding with the station which contains also array of this station's statuses
 			station_id: station.station_id,
 			name: station.name,
 			statuses: arrayOfStatusesToMigrate,
