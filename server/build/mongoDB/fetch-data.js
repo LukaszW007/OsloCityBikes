@@ -20,7 +20,7 @@ export const updateStationFromAPI = async (request, response) => {
             console.log("Connection status is ", mongoose.connection.readyState);
         }
         else {
-            console.log("Disconnected already! Connection status is ", mongoose.connection.readyState);
+            console.log("Disconnecting! Connection status is ", mongoose.connection.readyState);
             await disconnect();
         }
         response.status(200).send("Station information updated successfully");
@@ -32,25 +32,31 @@ export const updateStationFromAPI = async (request, response) => {
 };
 // Data fetching from API to update the map
 export const updateStationStatusFromAPI = async (request, response) => {
-    connect();
-    console.log("Starting data fetch...");
-    const fetchedStationStatusAPIData = await dataStationStatusFetching();
-    // Ensure MongoDB connection is still established before saving data
-    while (mongoose.connection.readyState !== 1) {
-        console.log("Waiting for MongoDB connection to be re-established...");
-        await new Promise((resolve) => setTimeout(resolve, 10));
-    }
-    // saving fetched API data into mongoDB
-    const updatesNumber = await addApiStatusDataToStationStatusCollection(fetchedStationStatusAPIData); //updating statuses collection
-    // await updateCountStatus(updatesNumber);
-    console.log("Data is fetched");
-    if (mongoose.connection.readyState !== 1) {
-        console.log("Connection status is ", mongoose.connection.readyState);
+    try {
+        connect();
+        console.log("Starting data fetch...");
+        const fetchedStationStatusAPIData = await dataStationStatusFetching();
+        // Ensure MongoDB connection is still established before saving data
+        while (mongoose.connection.readyState !== 1) {
+            console.log("Waiting for MongoDB connection to be re-established...");
+            await new Promise((resolve) => setTimeout(resolve, 10));
+        }
+        // saving fetched API data into mongoDB
+        const updatesNumber = await addApiStatusDataToStationStatusCollection(fetchedStationStatusAPIData); //updating statuses collection
+        // await updateCountStatus(updatesNumber);
+        console.log("Data is fetched");
+        if (mongoose.connection.readyState !== 1) {
+            console.log("Connection status is ", mongoose.connection.readyState);
+        }
+        else {
+            console.log("Disconnecting! Connection status is ", mongoose.connection.readyState);
+            await disconnect();
+        }
         response.status(200).json({ updates: updatesNumber });
     }
-    else {
-        disconnect();
-        response.status(200).json({ updates: updatesNumber });
+    catch (error) {
+        console.error("Error updating station from API:", error);
+        response.status(500).send("Internal server error");
     }
 };
 // Data fetching from API to update the map
