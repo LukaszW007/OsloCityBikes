@@ -18,10 +18,10 @@ export const updateStationFromAPI = async (request, response) => {
         console.log("Data is fetched");
         if (mongoose.connection.readyState !== 1) {
             console.log("Connection status is ", mongoose.connection.readyState);
-            disconnect();
         }
         else {
             console.log("Disconnected already! Connection status is ", mongoose.connection.readyState);
+            await disconnect();
         }
         response.status(200).send("Station information updated successfully");
     }
