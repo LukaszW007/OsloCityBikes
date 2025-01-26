@@ -35,7 +35,7 @@ export const errorHandler = (err, req, res, next) => {
 };
 export const apiKeyChecker = (req, res, next) => {
     const apiKey = req.headers["x-api-key"];
-    // console.log("API Key: ", apiKey);
+    console.log("API Key: ", apiKey);
     if (apiKey === process.env.CRON_JOB_API_KEY || process.env.NODE_ENV === "development") {
         next(); // API key is valid, proceed to the route
     }

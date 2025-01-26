@@ -31,6 +31,7 @@ export class XhrSecure {
 			})
 			.catch((error: any) => {
 				console.log(`${error.name}\n${error.message}`);
+				throw error;
 			});
 	}
 }

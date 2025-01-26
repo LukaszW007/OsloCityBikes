@@ -87,7 +87,7 @@ function App(props: any) {
 	const [fetchedStationStatusData, setFetchedStationStatusData] = useState<StationStatus[]>([]);
 	const [stationsListLastUpdate, setStationsListLastUpdate] = useState(null);
 	const [stationsStatusLastUpdate, setStationsStatusLastUpdate] = useState(null);
-	const [statusesUpdatesCount, setStatusesUpdatesCount] = useState(null);
+	const [statusesUpdatesCount, setStatusesUpdatesCount] = useState<number>(0);
 	const [isSnacbarVisible, setIsSnacbarVisible] = useState(false);
 
 	const interval = useRef<any>(null);
@@ -124,12 +124,15 @@ function App(props: any) {
 	// 2. naprawic updateCountStatus
 	// 3. sprawdzic co zwraca fetchStatuesesUpdatesCountfromMongo
 	const fetchStatuesesUpdatesCountfromMongo = async (): Promise<number> => {
-		const updatesCount = await XhrSecure.getJson(statusesUpdatesCountUrl, null).then((data) => {
-			console.log("Updates from mongo: ", data);
+		try {
+			const updatesCount = (await XhrSecure.getJson(statusesUpdatesCountUrl, null)) as number;
+			console.log("Updates from Mongo:", updatesCount);
 			setStatusesUpdatesCount(updatesCount);
-			return data;
-		});
-		return updatesCount;
+			return updatesCount;
+		} catch (error) {
+			console.error("Failed to fetch updates count from Mongo:", error);
+			return 0; // Returning a default value or handle appropriately
+		}
 	};
 
 	const isDataValid = (fetchedDataTime: number, savedDataTime: number): boolean => {
