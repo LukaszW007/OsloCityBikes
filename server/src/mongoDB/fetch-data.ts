@@ -13,6 +13,7 @@ import {
 	migrateData,
 	Station,
 	StationsStatus,
+	updateCountStatus,
 	UpdateCountStatus,
 	updateStationInformationCollection,
 } from "./mongo.js";
@@ -64,7 +65,7 @@ export const updateStationStatusFromAPI = async (request: Request, response: Res
 		}
 		// saving fetched API data into mongoDB
 		const updatesNumber = await addApiStatusDataToStationStatusCollection(fetchedStationStatusAPIData!); //updating statuses collection
-		// await updateCountStatus(updatesNumber);
+		await updateCountStatus(updatesNumber);
 		console.log("Data is fetched");
 		if (mongoose.connection.readyState !== 1) {
 			console.log("Connection status is ", mongoose.connection.readyState);

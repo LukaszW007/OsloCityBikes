@@ -1,5 +1,5 @@
 import { dataStationStatusFetching, dataStationInformationFetching, fetchedStationInformationAPIData, fetchedStationStatusAPIData, } from "../index.js";
-import { addApiStatusDataToStationStatusCollection, deleteAllInCollection, migrateData, Station, StationsStatus, UpdateCountStatus, updateStationInformationCollection, } from "./mongo.js";
+import { addApiStatusDataToStationStatusCollection, deleteAllInCollection, migrateData, Station, StationsStatus, updateCountStatus, UpdateCountStatus, updateStationInformationCollection, } from "./mongo.js";
 import mongoose from "mongoose";
 import { connect, disconnect } from "./utils.js";
 let fetchedAPIData;
@@ -43,7 +43,7 @@ export const updateStationStatusFromAPI = async (request, response) => {
         }
         // saving fetched API data into mongoDB
         const updatesNumber = await addApiStatusDataToStationStatusCollection(fetchedStationStatusAPIData); //updating statuses collection
-        // await updateCountStatus(updatesNumber);
+        await updateCountStatus(updatesNumber);
         console.log("Data is fetched");
         if (mongoose.connection.readyState !== 1) {
             console.log("Connection status is ", mongoose.connection.readyState);
