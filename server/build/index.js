@@ -106,11 +106,12 @@ export const dataStationStatusFetching = async () => {
     });
     return fetchedData;
 };
-export const fetchedStationInformationAPIData = await dataStationInformationFetching();
-export const fetchedStationStatusAPIData = await dataStationStatusFetching();
+export const fetchedStationInformationAPIData = await dataStationInformationFetching(); //fetching station_information from API
+export const fetchedStationStatusAPIData = await dataStationStatusFetching(); //fetching station_status from API
 //////
 // Data fetching from API to update the map
 if (process.env.NODE_ENV === "development") {
+    console.log("process.env.NODE_ENV", process.env.NODE_ENV);
     cron.schedule("*/1 * * * *", async () => {
         console.log("Starting data fetch...");
         // await dataStationStatusFetching();
