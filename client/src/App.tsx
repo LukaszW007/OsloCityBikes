@@ -112,6 +112,7 @@ function App(props: any) {
 	}, [fetchedStationInfoData, fetchedStationStatusData]);
 
 	useEffect(() => {
+		if (!statusesUpdatesCount) return;
 		setIsSnacbarVisible(true);
 		setTimeout(() => {
 			setIsSnacbarVisible(false);

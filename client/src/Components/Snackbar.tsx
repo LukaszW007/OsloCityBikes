@@ -12,25 +12,14 @@ interface ISnackbarProps {
 export function Snackbar(props: ISnackbarProps) {
 	const [snackbarText, setSnackbarText] = useState(props.snackbarText);
 	const [snackbarType, setSnackbarType] = useState(props.snackbarType);
-	// const [isVisible, setIsVisible] = useState(true)
 
-	// useEffect(()=> {
-
-	// },[isVisible])
-	switch (props.snackbarType) {
-		case snackbarTypeEnum.info: {
-			setSnackbarType(snackbarTypeEnum.info);
-			break;
-		}
-		case snackbarTypeEnum.error: {
-			setSnackbarType(snackbarTypeEnum.error);
-			break;
-		}
-	}
+	useEffect(() => {
+		setSnackbarType(props.snackbarType);
+	}, [props.snackbarType]);
 
 	const colorVariants = {
-		INFO: "fixed bottom-4 end-4 z-50 flex items-center justify-center gap-4 rounded-lg bg-blue-600 hover:bg-blue-500 px-5 py-3 text-white",
-		ERROR: "fixed bottom-4 end-4 z-50 flex items-center justify-center gap-4 rounded-lg bg-red-600 hover:bg-red-500 px-5 py-3 text-white",
+		INFO: "fixed bottom-4 start-4 z-50 flex items-center justify-center gap-4 rounded-lg bg-blue-600 hover:bg-blue-500 px-5 py-3 text-white",
+		ERROR: "fixed bottom-4 start-4 z-50 flex items-center justify-center gap-4 rounded-lg bg-red-600 hover:bg-red-500 px-5 py-3 text-white",
 	};
 	return (
 		<aside className={`${colorVariants[snackbarType]} ...`}>
