@@ -178,9 +178,9 @@ export const getStationsInfoById = async (request: Request, response: Response) 
 export const getStatusesUpdatesCount = async (request: Request, response: Response) => {
 	await connect();
 	const updatesCount = await UpdateCountStatus.findOne().sort({ timeStamp: -1 }).limit(1);
-	disconnect();
+	await disconnect();
 	if (updatesCount && updatesCount?.updates > 0) {
-		response.sendStatus(200).json(updatesCount);
+		response.sendStatus(200).json(updatesCount.updates);
 	} else {
 		response.sendStatus(204);
 	}

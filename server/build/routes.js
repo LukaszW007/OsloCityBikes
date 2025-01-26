@@ -19,5 +19,5 @@ router.post("/updatedbstation", apiKeyChecker, ipWhitelistMiddleware, updateStat
 router.post("/updatedbstationstatus", apiKeyChecker, ipWhitelistMiddleware, updateStationStatusFromAPI);
 // router.get("/test", mongoCheck);
 router.post("/migrateStatuses", apiKeyChecker, ipWhitelistMiddleware, migrateStatusCollection);
-router.post("/checkStatusesUpdatesCount", apiKeyChecker, getStatusesUpdatesCount);
+router.get("/checkStatusesUpdatesCount", apiKeyChecker, getStatusesUpdatesCount);
 export default router;
