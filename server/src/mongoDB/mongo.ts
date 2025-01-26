@@ -276,6 +276,6 @@ export const migrateData = async () => {
 
 export const updateCountStatus = async (updatesNumber: number) => {
 	const updateStatus = new UpdateCountStatus({ updates: updatesNumber });
-	updateStatus.save();
+	await updateStatus.save();
 	console.log("Count of statuses updated: ", updateStatus);
 };
