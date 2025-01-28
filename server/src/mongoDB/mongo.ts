@@ -16,6 +16,7 @@ import { IStationsStatus, connect, disconnect, hasStatusChanged, getCurrentWeek 
 interface IAllStationsStatuses {
 	station_id: string;
 	name: string;
+	week: number;
 	statuses: IStatusToMigrate[];
 }
 
@@ -240,12 +241,17 @@ export const deleteAllInCollection = async () => {
 export const migrateData = async () => {
 	const statuses = await StationsStatus.find().exec();
 	const stationsFromMongo = await Station.find().exec();
+	const migratedStatuses = await StationsStatusByDay.find().exec();
 
+	let weekOfCollectedStatuses = -1;
 	const migrationArray: IAllStationsStatuses[] = [];
 	for (const station of stationsFromMongo) {
 		const arrayOfStatusesToMigrate: IStatusToMigrate[] = [];
 		const statusesArrayOfStationId = statuses.filter((status) => status.station_id === station.station_id); //filtering all collected statuses of particular station
 		for (const status of statusesArrayOfStationId) {
+			if (!weekOfCollectedStatuses) {
+				weekOfCollectedStatuses = getCurrentWeek(status.timeStamp);
+			}
 			//creating an array of all statuses
 			const statusToMigrate: IStatusToMigrate = {
 				day: status.dayStamp,
@@ -263,6 +269,7 @@ export const migrateData = async () => {
 			// creating a single document corresponding with the station which contains also array of this station's statuses
 			station_id: station.station_id,
 			name: station.name,
+			week: weekOfCollectedStatuses,
 			statuses: arrayOfStatusesToMigrate,
 		};
 
