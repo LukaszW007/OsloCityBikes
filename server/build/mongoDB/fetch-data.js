@@ -6,7 +6,7 @@ let fetchedAPIData;
 // Data fetching from API to update the map
 export const updateStationFromAPI = async (request, response) => {
     try {
-        connect();
+        await connect();
         console.log("Starting data fetch...");
         const fetchedStationInformationAPIData = await dataStationInformationFetching();
         // Ensure MongoDB connection is still established before saving data
@@ -33,7 +33,7 @@ export const updateStationFromAPI = async (request, response) => {
 // Data fetching from API to update the map
 export const updateStationStatusFromAPI = async (request, response) => {
     try {
-        connect();
+        await connect();
         console.log("Starting data fetch...");
         const fetchedStationStatusAPIData = await dataStationStatusFetching();
         // Ensure MongoDB connection is still established before saving data

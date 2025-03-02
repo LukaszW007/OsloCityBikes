@@ -25,7 +25,7 @@ let fetchedAPIData: FetchedAPIData;
 // Data fetching from API to update the map
 export const updateStationFromAPI = async (request: Request, response: Response) => {
 	try {
-		connect();
+		await connect();
 		console.log("Starting data fetch...");
 		const fetchedStationInformationAPIData: FetchedAPIData = await dataStationInformationFetching();
 
@@ -55,7 +55,7 @@ export const updateStationFromAPI = async (request: Request, response: Response)
 // Data fetching from API to update the map
 export const updateStationStatusFromAPI = async (request: Request, response: Response) => {
 	try {
-		connect();
+		await connect();
 		console.log("Starting data fetch...");
 		const fetchedStationStatusAPIData: FetchedAPIData = await dataStationStatusFetching();
 
