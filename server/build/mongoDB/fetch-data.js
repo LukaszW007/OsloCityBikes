@@ -16,13 +16,13 @@ export const updateStationFromAPI = async (request, response) => {
         }
         await updateStationInformationCollection(fetchedStationInformationAPIData.stationInformation); //updating stations' list collection
         console.log("Data is fetched");
-        if (mongoose.connection.readyState !== 1) {
-            console.log("Connection status is ", mongoose.connection.readyState);
-        }
-        else {
-            console.log("Disconnecting! Connection status is ", mongoose.connection.readyState);
-            await disconnect();
-        }
+        // Since Vercel functions are stateless and short-lived, it might not be necessary to disconnect from MongoDB after each operation
+        // if (mongoose.connection.readyState !== 1) {
+        // 	console.log("Connection status is ", mongoose.connection.readyState);
+        // } else {
+        // 	console.log("Disconnecting! Connection status is ", mongoose.connection.readyState);
+        // 	await disconnect();
+        // }
         response.status(200).send("Station information updated successfully");
     }
     catch (error) {
@@ -45,13 +45,13 @@ export const updateStationStatusFromAPI = async (request, response) => {
         const updatesNumber = await addApiStatusDataToStationStatusCollection(fetchedStationStatusAPIData); //updating statuses collection
         await updateCountStatus(updatesNumber);
         console.log("Data is fetched");
-        if (mongoose.connection.readyState !== 1) {
-            console.log("Connection status is ", mongoose.connection.readyState);
-        }
-        else {
-            console.log("Disconnecting! Connection status is ", mongoose.connection.readyState);
-            await disconnect();
-        }
+        // Since Vercel functions are stateless and short-lived, it might not be necessary to disconnect from MongoDB after each operation
+        // if (mongoose.connection.readyState !== 1) {
+        // 	console.log("Connection status is ", mongoose.connection.readyState);
+        // } else {
+        // 	console.log("Disconnecting! Connection status is ", mongoose.connection.readyState);
+        // 	await disconnect();
+        // }
         response.status(200).json({ updates: updatesNumber });
     }
     catch (error) {
@@ -66,7 +66,8 @@ export const migrateStatusCollection = async (request, response) => {
         console.log("Starting migration");
         await migrateData();
         console.log("Data is migrated");
-        disconnect();
+        // Since Vercel functions are stateless and short-lived, it might not be necessary to disconnect from MongoDB after each operation
+        // disconnect();
         response.status(200).send(`Station's statuses are transformed and migrated to the collection: stations_status_by_days`);
     }
     catch (error) {
