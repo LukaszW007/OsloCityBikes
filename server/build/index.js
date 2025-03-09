@@ -34,7 +34,7 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
 // 	});
 ///////////////
 // let originUrl: string = "https://oslo-city-bikes.vercel.app";
-let originUrl = "https://oslocitybikes-backend.onrender.com";
+let originUrl = "https://oslocitybikes.onrender.com";
 if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
     originUrl = "http://localhost:3000";
 }
