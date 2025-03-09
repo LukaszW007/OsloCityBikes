@@ -70,13 +70,21 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
 	stationsStatusUrl = "http://localhost:3001/api/station_status";
 	stationsStatusUpdatingTimeUrl = "http://localhost:3001/api/station_status_state";
 	statusesUpdatesCountUrl = "http://localhost:3001/api/checkStatusesUpdatesCount";
+	// } else {
+	// 	// production code
+	// 	stationsListUrl = "https://oslo-city-bikes-server.vercel.app/api/station_information";
+	// 	stationsListUpdatingTimeUrl = "https://oslo-city-bikes-server.vercel.app/api/station_information_state";
+	// 	stationsStatusUrl = "https://oslo-city-bikes-server.vercel.app/api/station_status";
+	// 	stationsStatusUpdatingTimeUrl = "https://oslo-city-bikes-server.vercel.app/api/station_status_state";
+	// 	statusesUpdatesCountUrl = "https://oslo-city-bikes-server.vercel.app/api/checkStatusesUpdatesCount";
+	// }
 } else {
-	// production code
-	stationsListUrl = "https://oslo-city-bikes-server.vercel.app/api/station_information";
-	stationsListUpdatingTimeUrl = "https://oslo-city-bikes-server.vercel.app/api/station_information_state";
-	stationsStatusUrl = "https://oslo-city-bikes-server.vercel.app/api/station_status";
-	stationsStatusUpdatingTimeUrl = "https://oslo-city-bikes-server.vercel.app/api/station_status_state";
-	statusesUpdatesCountUrl = "https://oslo-city-bikes-server.vercel.app/api/checkStatusesUpdatesCount";
+	// production code Render.com
+	stationsListUrl = "https://oslocitybikes-backend.onrender.com/api/station_information";
+	stationsListUpdatingTimeUrl = "https://oslocitybikes-backend.onrender.com/api/station_information_state";
+	stationsStatusUrl = "https://oslocitybikes-backend.onrender.com/api/station_status";
+	stationsStatusUpdatingTimeUrl = "https://oslocitybikes-backend.onrender.com/api/station_status_state";
+	statusesUpdatesCountUrl = "https://oslocitybikes-backend.onrender.com/api/checkStatusesUpdatesCount";
 }
 
 function App(props: any) {
