@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { fetchedStationStatusAPIData, FetchedAPIData, fetchedStationInformationAPIData } from "./index.js";
+import { fetchedStationStatusAPIData, FetchedAPIData, fetchedStationInformationAPIData } from "./app.js";
 
 // const fetchedAPIData: FetchedAPIData = await dataFetching();
 export const maxDuration = 60;

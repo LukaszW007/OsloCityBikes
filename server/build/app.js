@@ -6,8 +6,8 @@ import router from "./routes.js";
 import APIConnector from "./connectors/axiosConnector.js";
 import { requestLogger, unknownEndpoint, errorHandler } from "./utils/middleware.js";
 import cors from "cors";
-import { addApiStatusDataToStationStatusCollection, updateStationInformationCollection, } from "./mongoDB/mongo.js";
-import { connect, disconnect } from "./mongoDB/utils.js";
+import { connect } from "./mongoDB/utils.js";
+import { migrateStatusCollection, updateStationFromAPI, updateStationStatusFromAPI } from "./mongoDB/fetch-data.js";
 const app = express();
 app.set("trust proxy", 1);
 //MongoDB
@@ -111,31 +111,48 @@ export const fetchedStationInformationAPIData = await dataStationInformationFetc
 export const fetchedStationStatusAPIData = await dataStationStatusFetching(); //fetching station_status from API
 //////
 // Data fetching from API to update the map
-if (process.env.NODE_ENV === "development") {
+if (!process.env.DISABLED_CRON_JOBS) {
+    // console.log("process.env.NODE_ENV", process.env.NODE_ENV);
+    // cron.schedule("*/1 * * * *", async () => {
+    // 	console.log("Starting data fetch...");
+    // 	// await dataStationStatusFetching();
+    // 	console.log("Data is fetching");
+    // 	let apiStatusData = null;
+    // 	while (apiStatusData === null) {
+    // 		await new Promise((resolve) => setTimeout(resolve, 500));
+    // 		apiStatusData = fetchedStationStatusAPIData;
+    // 		console.log("status will be added to mongoDB");
+    // 	}
+    // 	await addApiStatusDataToStationStatusCollection(apiStatusData!);
+    // 	let apiData = null;
+    // 	// await dataStationInformationFetching();
+    // 	while (apiData === null) {
+    // 		await new Promise((resolve) => setTimeout(resolve, 500));
+    // 		apiData = fetchedStationInformationAPIData.stationInformation;
+    // 		console.log("stations will be added to mongoDB");
+    // 	}
+    // 	// const apiData = fetchedAPIData.stationInformation;
+    // 	await connect();
+    // 	await updateStationInformationCollection(apiData!);
+    // 	console.log("Data is fetching to update mongoDB");
+    // 	disconnect();
+    // });
     console.log("process.env.NODE_ENV", process.env.NODE_ENV);
+    await connect();
+    cron.schedule("0 0 * * *", async () => {
+        console.log("Starting check stations' list in API and update MongoDB if needed");
+        await updateStationFromAPI();
+        // await disconnect();
+    });
     cron.schedule("*/1 * * * *", async () => {
-        console.log("Starting data fetch...");
-        // await dataStationStatusFetching();
-        console.log("Data is fetching");
-        let apiStatusData = null;
-        while (apiStatusData === null) {
-            await new Promise((resolve) => setTimeout(resolve, 500));
-            apiStatusData = fetchedStationStatusAPIData;
-            console.log("status will be added to mongoDB");
-        }
-        await addApiStatusDataToStationStatusCollection(apiStatusData);
-        let apiData = null;
-        // await dataStationInformationFetching();
-        while (apiData === null) {
-            await new Promise((resolve) => setTimeout(resolve, 500));
-            apiData = fetchedStationInformationAPIData.stationInformation;
-            console.log("stations will be added to mongoDB");
-        }
-        // const apiData = fetchedAPIData.stationInformation;
-        await connect();
-        await updateStationInformationCollection(apiData);
-        console.log("Data is fetching to update mongoDB");
-        disconnect();
+        console.log("Starting update mongoDb with API data like rentals amount every minute");
+        await updateStationStatusFromAPI();
+        // await disconnect();
+    });
+    cron.schedule("59 23 * * 0", async () => {
+        console.log("Starting migrate statuses to bulk documents condensing of one week data per station");
+        await migrateStatusCollection();
+        // await disconnect();
     });
 }
 // setInterval(() => {
@@ -222,7 +239,7 @@ if (process.env.NODE_ENV === "development") {
 // 	}
 // });
 app.use(unknownEndpoint);
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });

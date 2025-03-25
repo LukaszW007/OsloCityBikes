@@ -1,4 +1,4 @@
-import { fetchedStationStatusAPIData, fetchedStationInformationAPIData } from "./index.js";
+import { fetchedStationStatusAPIData, fetchedStationInformationAPIData } from "./app.js";
 // const fetchedAPIData: FetchedAPIData = await dataFetching();
 export const maxDuration = 60;
 export const dynamic = "force-dynamic";

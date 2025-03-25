@@ -2,7 +2,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 import mongoose from "mongoose";
-import { FetchedAPIData, StationInformation, StationStatus, StationStatusState } from "../index.js";
+import { FetchedAPIData, StationInformation, StationStatus, StationStatusState } from "../app.js";
 import { stationSchema, stationsStatus, stationsStatusByDay, updateCountStatusSchema } from "./schemas.js";
 import { IStationsStatus, connect, disconnect, hasStatusChanged, getCurrentWeek } from "./utils.js";
 // import { MongoClient, ServerApiVersion } from "mongodb";
@@ -241,13 +241,36 @@ export const deleteAllInCollection = async () => {
 export const migrateData = async () => {
 	const statuses = await StationsStatus.find().exec();
 	const stationsFromMongo = await Station.find().exec();
+
+	//checking the last migrated status of the last document in the collection to recognize date from where suppose to be started a new migration
 	const migratedStatuses = await StationsStatusByDay.find().exec();
+
+	let lastDateMigrated: Date | null = null;
+	let nextDay: number | null = null;
+
+	if (migratedStatuses.length > 0) {
+		lastDateMigrated =
+			migratedStatuses[migratedStatuses.length - 1].statuses[migratedStatuses[migratedStatuses.length - 1].statuses.length - 1].timestamp;
+		nextDay = new Date(lastDateMigrated).setDate(lastDateMigrated.getDate() + 1);
+		nextDay = new Date(nextDay).setHours(0, 0, 0, 0);
+	}
 
 	let weekOfCollectedStatuses = -1;
 	const migrationArray: IAllStationsStatuses[] = [];
+
 	for (const station of stationsFromMongo) {
 		const arrayOfStatusesToMigrate: IStatusToMigrate[] = [];
-		const statusesArrayOfStationId = statuses.filter((status) => status.station_id === station.station_id); //filtering all collected statuses of particular station
+
+		//filtering all collected statuses of particular station
+		let statusesArrayOfStationId;
+		if (nextDay) {
+			statusesArrayOfStationId = statuses.filter(
+				(status) => status.station_id === station.station_id && status.timeStamp >= new Date(nextDay!)
+			);
+		} else {
+			statusesArrayOfStationId = statuses.filter((status) => status.station_id === station.station_id);
+		}
+
 		for (const status of statusesArrayOfStationId) {
 			if (!weekOfCollectedStatuses) {
 				weekOfCollectedStatuses = getCurrentWeek(status.timeStamp);

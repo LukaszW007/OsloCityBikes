@@ -2,7 +2,8 @@ import mongoose from "mongoose";
 let url = process.env.MONGODB_URI;
 if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
     url = process.env.MONGODB_URI_DEV;
-    console.log("Connecting to DEVELOPMENT mongoDB");
+    console.log("Connecting to DEVELOPMENT mongoDB", process.env.NODE_ENV);
+    console.log("Connecting to DEVELOPMENT mongoDB", url);
 }
 const options = {
     serverSelectionTimeoutMS: 25000, // Increase the timeout to 25 seconds
@@ -54,3 +55,5 @@ export const getCurrentWeek = (timeStamp) => {
     let week = Math.ceil(dayOfYear / 7);
     return week;
 };
+// Environment-based route configuration
+export const isServerless = process.env.DEPLOYMENT_ENV && process.env.DEPLOYMENT_ENV === "serverless";

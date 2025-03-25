@@ -6,7 +6,7 @@ import {
 	fetchedStationStatusAPIData,
 	StationInformation,
 	FetchedAPIData,
-} from "../index.js";
+} from "../app.js";
 import {
 	addApiStatusDataToStationStatusCollection,
 	deleteAllInCollection,
@@ -18,18 +18,19 @@ import {
 	updateStationInformationCollection,
 } from "./mongo.js";
 import mongoose from "mongoose";
-import { connect, disconnect } from "./utils.js";
+import { connect, disconnect, isServerless } from "./utils.js";
 
 let fetchedAPIData: FetchedAPIData;
 
 // Data fetching from API to update the map
-export const updateStationFromAPI = async (request: Request, response: Response) => {
+export const updateStationFromAPI = async (request?: Request, response?: Response) => {
 	try {
-		await connect();
-		console.log("Starting data fetch...");
+		isServerless ? await connect() : null;
+		console.log("updateStationFromAPI - Starting data fetch...");
 		const fetchedStationInformationAPIData: FetchedAPIData = await dataStationInformationFetching();
 
 		// Ensure MongoDB connection is still established before saving data
+		debugger;
 		while (mongoose.connection.readyState !== 1) {
 			console.log("Waiting for MongoDB connection to be re-established...");
 			await new Promise((resolve) => setTimeout(resolve, 10));
@@ -45,20 +46,20 @@ export const updateStationFromAPI = async (request: Request, response: Response)
 		// 	console.log("Disconnecting! Connection status is ", mongoose.connection.readyState);
 		// 	await disconnect();
 		// }
-		response.status(200).send("Station information updated successfully");
+		response?.status(200).send("Station information updated successfully");
 	} catch (error) {
 		console.error("Error updating station from API:", error);
-		response.status(500).send("Internal server error");
+		response?.status(500).send("Internal server error");
 	}
 };
 
 // Data fetching from API to update the map
-export const updateStationStatusFromAPI = async (request: Request, response: Response) => {
+export const updateStationStatusFromAPI = async (request?: Request, response?: Response) => {
 	try {
-		await connect();
-		console.log("Starting data fetch...");
+		isServerless ? await connect() : null;
+		console.log("updateStationStatusFromAPI - Starting data fetch...");
 		const fetchedStationStatusAPIData: FetchedAPIData = await dataStationStatusFetching();
-
+		debugger;
 		// Ensure MongoDB connection is still established before saving data
 		while (mongoose.connection.readyState !== 1) {
 			console.log("Waiting for MongoDB connection to be re-established...");
@@ -76,27 +77,27 @@ export const updateStationStatusFromAPI = async (request: Request, response: Res
 		// 	console.log("Disconnecting! Connection status is ", mongoose.connection.readyState);
 		// 	await disconnect();
 		// }
-		response.status(200).json({ updates: updatesNumber });
+		response?.status(200).json({ updates: updatesNumber });
 	} catch (error) {
 		console.error("Error updating station from API:", error);
-		response.status(500).send("Internal server error");
+		response?.status(500).send("Internal server error");
 	}
 };
 
 // Data fetching from API to update the map
-export const migrateStatusCollection = async (request: Request, response: Response) => {
+export const migrateStatusCollection = async (request?: Request, response?: Response) => {
 	try {
-		await connect();
+		isServerless ? await connect() : null;
 		console.log("Starting migration");
 
 		await migrateData();
 		console.log("Data is migrated");
 		// Since Vercel functions are stateless and short-lived, it might not be necessary to disconnect from MongoDB after each operation
 		// disconnect();
-		response.status(200).send(`Station's statuses are transformed and migrated to the collection: stations_status_by_days`);
+		response?.status(200).send(`Station's statuses are transformed and migrated to the collection: stations_status_by_days`);
 	} catch (error) {
 		console.error("Error updating station from API:", error);
-		response.status(500).send("Internal server error");
+		response?.status(500).send("Internal server error");
 	}
 };
 

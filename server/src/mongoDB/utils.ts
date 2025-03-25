@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { StationStatus } from "../index.js";
+import { StationStatus } from "../app.js";
 import { UpdateCountStatus } from "./mongo.js";
 
 export interface IStationsStatus {
@@ -17,7 +17,8 @@ let url = process.env.MONGODB_URI as string;
 
 if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
 	url = process.env.MONGODB_URI_DEV as string;
-	console.log("Connecting to DEVELOPMENT mongoDB");
+	console.log("Connecting to DEVELOPMENT mongoDB", process.env.NODE_ENV);
+	console.log("Connecting to DEVELOPMENT mongoDB", url);
 }
 
 const options = {
@@ -76,3 +77,6 @@ export const getCurrentWeek = (timeStamp: Date): number => {
 	let week = Math.ceil(dayOfYear / 7);
 	return week;
 };
+
+// Environment-based route configuration
+export const isServerless = process.env.DEPLOYMENT_ENV && process.env.DEPLOYMENT_ENV === "serverless";
